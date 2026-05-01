@@ -24,11 +24,11 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#061209;--bg-mid:#0c1f11;--gd:#0f3d1c;--gm:#1a5c2e;
+  --bg:#000000;--bg-mid:#111111;--gd:#1a1a1a;--gm:#222222;
   --gold:#d4a843;--goldt:#f0c060;--red:#c0392b;--redd:#8b0000;
   --cream:#f5edd8;--silver:#b0b0b0;
   --card-border:rgba(212,168,67,.6);
-  --score-bg:linear-gradient(135deg,rgba(15,61,28,.9),rgba(6,18,9,.9));
+  --score-bg:linear-gradient(135deg,rgba(26,26,26,.9),rgba(0,0,0,.9));
   --score-border:rgba(212,168,67,.5);
 }
 html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--cream);transition:background .5s,color .5s}
@@ -40,12 +40,12 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 
 /* ── SCREENS ── */
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
-#setup-screen{background:radial-gradient(ellipse at 50% 30%,#0f3d1c 0%,var(--bg) 70%)}
-#quiz-screen{background:radial-gradient(ellipse at 50% 0%,#0f3d1c 0%,var(--bg) 65%);justify-content:flex-start;padding:0}
-#settings-screen{background:#060e06;justify-content:flex-start;align-items:flex-start;overflow-y:auto;padding:0}
+#setup-screen{background:radial-gradient(ellipse at 50% 30%,#1a1a1a 0%,#000000 70%)}
+#quiz-screen{background:radial-gradient(ellipse at 50% 0%,#1a1a1a 0%,#000000 65%);justify-content:flex-start;padding:0}
+#settings-screen{background:#000000;justify-content:flex-start;align-items:flex-start;overflow-y:auto;padding:0}
 
 /* ── SETUP ── */
-.setup-card{background:linear-gradient(145deg,rgba(15,61,28,.95),rgba(6,18,9,.97));border:2px solid var(--card-border);border-radius:22px;padding:44px 40px;max-width:480px;width:92%;text-align:center;box-shadow:0 0 60px rgba(212,168,67,.25),inset 0 1px 0 rgba(255,255,255,.07);transition:border-color .4s,box-shadow .4s}
+.setup-card{background:linear-gradient(145deg,rgba(26,26,26,.95),rgba(0,0,0,.97));border:2px solid var(--card-border);border-radius:22px;padding:44px 40px;max-width:480px;width:92%;text-align:center;box-shadow:0 0 60px rgba(212,168,67,.25),inset 0 1px 0 rgba(255,255,255,.07);transition:border-color .4s,box-shadow .4s}
 .setup-tree{font-size:2.8rem;margin-bottom:4px;animation:sway 3s ease-in-out infinite;display:block}
 @keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 .setup-title{font-family:'Mountains of Christmas',cursive;font-size:2.4rem;color:var(--gold);text-shadow:0 0 30px rgba(212,168,67,.5);line-height:1.1}
@@ -95,7 +95,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 
 /* ── QUESTION MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:flex;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(6px)}
-.qmodal{background:linear-gradient(155deg,#0f3d1c 0%,#061209 100%);border:2px solid var(--gold);border-radius:22px;width:100%;max-width:840px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 50px rgba(212,168,67,.18)}
+.qmodal{background:linear-gradient(155deg,#1a1a1a 0%,#000000 100%);border:2px solid var(--gold);border-radius:22px;width:100%;max-width:840px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 50px rgba(212,168,67,.18)}
 .mhdr{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(212,168,67,.25);flex-shrink:0}
 .mcat{font-size:.75rem;color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-weight:700}
 .mpts{font-family:'Mountains of Christmas',cursive;font-size:1.8rem;color:var(--goldt)}
@@ -145,7 +145,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .ttxt.urgent{color:var(--red)}
 
 /* ── CONFIRM MODAL ── */
-.confirm-box{background:linear-gradient(155deg,#0f3d1c 0%,#061209 100%);border:2px solid var(--red);border-radius:18px;padding:36px 32px;max-width:380px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.confirm-box{background:linear-gradient(155deg,#1a1a1a 0%,#000000 100%);border:2px solid var(--red);border-radius:18px;padding:36px 32px;max-width:380px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7)}
 .confirm-icon{font-size:2.5rem;margin-bottom:12px}
 .confirm-title{font-family:'Mountains of Christmas',cursive;font-size:1.8rem;color:var(--cream);margin-bottom:8px}
 .confirm-msg{font-size:.85rem;color:var(--silver);margin-bottom:22px;line-height:1.5}
@@ -311,9 +311,9 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
 <!-- ════════════════════════════════ SETUP ════════════════════════════════ -->
 <div class="screen" id="setup-screen">
   <div class="setup-card">
-    <span class="setup-tree" id="setup-icon">🎄</span>
-    <div class="setup-title" id="setup-title-txt">Weihnachts&shy;quiz</div>
-    <div class="setup-sub" id="setup-sub-txt">⭐ Das festlichste Quiz des Jahres ⭐</div>
+    <span class="setup-tree" id="setup-icon"></span>
+    <div class="setup-title" id="setup-title-txt">Trivia Quiz</div>
+    <div class="setup-sub" id="setup-sub-txt">Lade deinen Fragenkatalog</div>
     <div id="step-theme" style="display:none">
       <label class="setup-label">Theme auswählen:</label>
       <div class="theme-pick-grid" id="theme-pick-grid"></div>
@@ -339,7 +339,7 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
     <div id="step-names" style="display:none">
       <label class="setup-label">Teamnamen eingeben:</label>
       <div class="team-name-inputs" id="tni"></div>
-      <button class="setup-btn" id="start-btn" onclick="startGame()">🎄 Quiz starten!</button>
+      <button class="setup-btn" id="start-btn" onclick="startGame()">▶ Quiz starten!</button>
     </div>
   </div>
 </div>
@@ -348,7 +348,7 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
 <div class="screen" id="quiz-screen" style="display:none">
   <div class="qhdr">
     <div class="qhdr-stars" id="qhdr-stars">★ ★ ★ ★ ★ ★ ★</div>
-    <div class="qhdr-title" id="qhdr-title">🎄 Weihnachts Trivia Quiz 🎄</div>
+    <div class="qhdr-title" id="qhdr-title">Trivia Quiz</div>
   </div>
   <button class="settings-fab" onclick="showSettings()">⚙ Einstellungen</button>
   <div class="board-wrap">
@@ -555,6 +555,19 @@ const DEFAULT_CATS = [];
 let PTS = [200,500,1000];
 
 const THEMES = {
+  none:{
+    label:'⬜ Kein Theme',
+    bg:'#000000',bgMid:'#111111',gd:'#1a1a1a',gm:'#222222',
+    gold:'#d4a843',goldt:'#f0c060',red:'#c0392b',redd:'#8b0000',
+    cream:'#f5edd8',silver:'#b0b0b0',
+    boardBg:'radial-gradient(ellipse at 50% 0%,#1a1a1a 0%,#000000 65%)',
+    setupBg:'radial-gradient(ellipse at 50% 30%,#1a1a1a 0%,#000000 70%)',
+    settingsBg:'#000000',
+    particles:[],
+    defaultTitle:'Trivia Quiz',
+    icon:'',sub:'Lade deinen Fragenkatalog',
+    startBtn:'▶ Quiz starten!',
+  },
   christmas:{
     label:'🎄 Weihnachten',
     bg:'#061209',bgMid:'#0c1f11',gd:'#0f3d1c',gm:'#1a5c2e',
@@ -635,8 +648,8 @@ const S = {
   cur:null,
   tid:null,tval:0,tmax:30,
   awardedTeams:new Set(),
-  theme:'christmas',
-  title:'🎄 Weihnachts Trivia Quiz 🎄',
+  theme:'none',
+  title:'Trivia Quiz',
   timerVolume:1.0,
   videoVolume:0.5,
   musicVolume:0.5,
@@ -786,6 +799,7 @@ function load(){
 function createSnow(chars){
   const c=document.getElementById('snow');
   c.innerHTML='';
+  if(!chars||chars.length===0) return;
   for(let i=0;i<55;i++){
     const s=document.createElement('span');
     s.className='sf';
@@ -898,9 +912,9 @@ function renderThemePicker(){
   if(!grid)return;
   grid.innerHTML='';
   Object.entries(THEMES).forEach(([id,t])=>{
+    if(id==='none') return;
     const card=document.createElement('div');
     card.className='theme-pick-card'+(S.theme===id?' tsel':'');
-    card.dataset.tid=id;
     card.innerHTML=`<span class="theme-pick-icon">${t.icon}</span><div class="theme-pick-name">${t.label.replace(/^\p{Emoji}+\s*/u,'')}</div>`;
     card.addEventListener('click',()=>{
       document.querySelectorAll('.theme-pick-card').forEach(c=>c.classList.remove('tsel'));
@@ -1962,6 +1976,7 @@ function renderSettingsTab(){
   const grid=document.getElementById('theme-grid');
   grid.innerHTML='';
   Object.entries(THEMES).forEach(([id,t])=>{
+    if(id==='none') return;
     const c=document.createElement('div');
     c.className='theme-card'+(S.theme===id?' selected':'');
     c.dataset.tid=id;
@@ -2499,7 +2514,6 @@ function confetti(){
 //  INIT
 // ════════════════════════════════════════════════════════
 initQs();
-load();
 syncPTS();
 ensureQsForCats();
 applyTheme(S.theme,false);
