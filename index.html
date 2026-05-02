@@ -984,6 +984,10 @@ function handleJsonUpload(e){
       else if(d.timers) S.timers=S.pts.map((_,i)=>d.timers[i]||30);
       if(d.theme && THEMES[d.theme]) applyTheme(d.theme,false);
       if(d.title) S.title=d.title;
+      if(d.timerVolume!=null) S.timerVolume=d.timerVolume;
+      if(d.videoVolume!=null) S.videoVolume=d.videoVolume;
+      if(d.musicVolume!=null) S.musicVolume=d.musicVolume;
+      if(d.multipliers && Array.isArray(d.multipliers)) S.multipliers=d.multipliers;
       ensureQsForCats();
       save();
       updateTitleDisplay();
@@ -2213,6 +2217,9 @@ function handleImport(e){
       ensureQsForCats();
       if(d.theme && THEMES[d.theme]) applyTheme(d.theme,false);
       if(d.title) S.title=d.title;
+      if(d.timerVolume!=null) S.timerVolume=d.timerVolume;
+      if(d.videoVolume!=null) S.videoVolume=d.videoVolume;
+      if(d.musicVolume!=null) S.musicVolume=d.musicVolume;
       if(d.multipliers && Array.isArray(d.multipliers)) S.multipliers=d.multipliers;
       save();
       renderQuestionsTab();
