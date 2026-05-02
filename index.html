@@ -662,7 +662,7 @@ const S = {
 // ════════════════════════════════════════════════════════
 function syncPTS(){ PTS=S.pts; }
 function defQ(ci,pi){
-  return {type:'text',question:'',answer:'',pixelated:false,
+  return {type:'text',question:'',answer:'',answerMedia:'',pixelated:false,
           questionText:'',timer:null,startTime:null,duration:null};
 }
 function initQs(){
@@ -725,23 +725,34 @@ function registerDataUrl(dataUrl, ci, pi){
 function blobifyImportedQs(qs){
   if(!qs) return qs;
   return qs.map((col,ci)=>col.map((q,pi)=>{
-    if(q&&q.question&&q.question.startsWith('data:')){
-      const blobUrl=registerDataUrl(q.question,ci,pi);
-      return{...q,question:blobUrl};
+    if(!q) return q;
+    let out={...q};
+    if(out.question&&out.question.startsWith('data:')){
+      out={...out,question:registerDataUrl(out.question,ci,pi)};
     }
-    return q;
+    if(out.answerMedia&&out.answerMedia.startsWith('data:')){
+      out={...out,answerMedia:registerDataUrl(out.answerMedia,`ans-${ci}`,pi)};
+    }
+    return out;
   }));
 }
 
 // Prepare a clean copy of qs for localStorage (replace blob: with markers)
 function stripBlobsForStorage(qs){
   return qs.map((col,ci)=>col.map((q,pi)=>{
-    if(q&&q.question&&q.question.startsWith('blob:')){
+    if(!q) return q;
+    let out={...q};
+    if(out.question&&out.question.startsWith('blob:')){
       const key=`${ci}-${pi}`;
       const entry=_mediaStore.get(key);
-      return{...q,question:`__local__:${entry?entry.file.name:''}`};
+      out={...out,question:`__local__:${entry?entry.file.name:''}`};
     }
-    return q;
+    if(out.answerMedia&&out.answerMedia.startsWith('blob:')){
+      const key=`ans-${ci}-${pi}`;
+      const entry=_mediaStore.get(key);
+      out={...out,answerMedia:`__local__:${entry?entry.file.name:''}`};
+    }
+    return out;
   }));
 }
 
@@ -780,10 +791,14 @@ function load(){
       // Clear __local__ markers (file is gone after reload) and legacy data: URLs
       S.qs=d.qs.map((col,ci)=>col.map((q,pi)=>{
         if(!q) return q;
-        if(q.question&&(q.question.startsWith('__local__:')||q.question.startsWith('data:'))){
-          return{...q,question:''};
+        let out={...q};
+        if(out.question&&(out.question.startsWith('__local__:')||out.question.startsWith('data:'))){
+          out={...out,question:''};
         }
-        return q;
+        if(out.answerMedia&&(out.answerMedia.startsWith('__local__:')||out.answerMedia.startsWith('data:'))){
+          out={...out,answerMedia:''};
+        }
+        return out;
       }));
       // Nullify timers that equal defaults (migration)
       S.qs.forEach((col,ci)=>col.forEach((q,pi)=>{
@@ -1513,6 +1528,50 @@ function openQ(ci,pi){
   }
 }
 
+// ════════════════════════════════════════════════════════
+//  ANSWER MEDIA HELPER
+// ════════════════════════════════════════════════════════
+function buildAnswerMedia(url){
+  if(!url) return null;
+  // YouTube?
+  if(ytId(url)){
+    const fakeQ={type:'video',question:url,startTime:null,duration:null,questionText:''};
+    const wrap=buildMediaEl(fakeQ);
+    if(wrap) wrap.style.marginTop='10px';
+    return wrap;
+  }
+  const lower=url.toLowerCase().split('?')[0];
+  // Image
+  if(/\.(jpg|jpeg|png|gif|webp|svg|bmp|avif)$/.test(lower)){
+    const img=document.createElement('img');
+    img.className='qimg';img.src=url;img.alt='';
+    img.style.cssText='max-height:220px;margin-top:10px;border-radius:12px;display:block;margin-left:auto;margin-right:auto;object-fit:contain';
+    return img;
+  }
+  // Video
+  if(/\.(mp4|webm|ogv|mov|avi|mkv)$/.test(lower)){
+    const v=document.createElement('video');
+    v.src=url;v.controls=true;
+    v.style.cssText='max-width:100%;max-height:220px;border-radius:12px;display:block;margin:10px auto 0';
+    v.volume=Math.max(0,Math.min(1,S.videoVolume));
+    return v;
+  }
+  // Audio
+  if(/\.(mp3|wav|ogg|m4a|aac|flac|opus)$/.test(lower)){
+    const wrap=document.createElement('div');
+    wrap.className='qaud-wrap';wrap.style.marginTop='10px';
+    const a=document.createElement('audio');
+    a.src=url;a.controls=true;a.className='qaud';
+    wrap.appendChild(a);
+    return wrap;
+  }
+  // Fallback: show as image
+  const img=document.createElement('img');
+  img.className='qimg';img.src=url;img.alt='';
+  img.style.cssText='max-height:220px;margin-top:10px;border-radius:12px;display:block;margin-left:auto;margin-right:auto;object-fit:contain';
+  return img;
+}
+
 function revealAnswer(){
   stopTimer();
   document.getElementById('ans-sec').style.display='block';
@@ -1551,6 +1610,21 @@ function revealAnswer(){
     btns.appendChild(b);
   });
   document.getElementById('award-sec').style.display='block';
+  // Show answer media (text type only)
+  if(S.cur){
+    const q=(S.qs[S.cur.ci]&&S.qs[S.cur.ci][S.cur.pi])||defQ(S.cur.ci,S.cur.pi);
+    if(q.type==='text'&&q.answerMedia){
+      const ansSec=document.getElementById('ans-sec');
+      // Remove any previous answer media element
+      const prev=document.getElementById('ans-media-wrap');
+      if(prev) prev.remove();
+      const mediaWrap=document.createElement('div');
+      mediaWrap.id='ans-media-wrap';
+      mediaWrap.style.cssText='margin-top:10px;display:flex;justify-content:center;max-height:260px;overflow:hidden';
+      const el=buildAnswerMedia(q.answerMedia);
+      if(el){ mediaWrap.appendChild(el); ansSec.appendChild(mediaWrap); }
+    }
+  }
 }
 
 function awardPts(idx,btn){
@@ -1573,8 +1647,10 @@ function closeQ(){
     S.cur=null;
   }
   document.getElementById('q-overlay').style.display='none';
-  document.querySelectorAll('#m-body video,#m-body audio,#m-body iframe')
+  document.querySelectorAll('#m-body video,#m-body audio,#m-body iframe,#ans-sec video,#ans-sec audio,#ans-sec iframe')
     .forEach(m=>{try{m.src='';m.pause&&m.pause();}catch(_){}});
+  const ansMedia=document.getElementById('ans-media-wrap');
+  if(ansMedia) ansMedia.remove();
   checkMultiplierTriggers();
   renderBoard();
   showSnow();
@@ -1763,8 +1839,19 @@ function renderQuestionsTab(){
             <div class="af"><label>Dauer (Sek.)</label><input class="ainp" type="number" id="qdur-${ci}-${pi}" value="${q.duration||''}" min="1" placeholder="Ende"></div>
           </div>
         </div>
-        <div class="af"><label>Antwort</label><textarea class="ata" id="qa-${ci}-${pi}" placeholder="Antwort …">${esc(q.answer)}</textarea></div>
-        <div class="af"><label>Timer (Sek.) — leer = Standard (${S.timers[pi]||30}s)</label><input class="ainp" type="number" id="qtm-${ci}-${pi}" value="${q.timer||''}" min="5" max="600" placeholder="Standard"></div>
+        <div class="af"><label>Antwort</label><textarea class="ata" id="qa-${ci}-${pi}" placeholder="Antwort \u2026">${esc(q.answer)}</textarea></div>
+        <div class="af" id="ansmedia-row-${ci}-${pi}" style="${q.type==='text'?'':'display:none'}">
+          <label>Antwort-Medien-URL <span style="color:var(--silver);font-weight:400">(optional \u2013 wird beim Aufdecken angezeigt)</span></label>
+          <textarea class="ata" id="qam-${ci}-${pi}" placeholder="Bild-/Video-/Audio-/YouTube-URL \u2026">${esc(q.answerMedia||'')}</textarea>
+          <div style="margin-top:5px">
+            <label style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;background:rgba(255,255,255,.07);border:1px solid rgba(212,168,67,.3);border-radius:7px;padding:6px 12px;font-size:.78rem;color:var(--goldt);transition:background .2s">
+              📁 Lokale Datei laden
+              <input type="file" id="qamfile-${ci}-${pi}" accept="image/*,video/*,audio/*" style="display:none" onchange="handleAnswerMediaFile(${ci},${pi},this)">
+            </label>
+            <span id="qamfile-name-${ci}-${pi}" style="font-size:.7rem;color:var(--silver);margin-left:8px">${q.answerMedia&&(q.answerMedia.startsWith('blob:')||q.answerMedia.startsWith('data:'))?'(Datei geladen)':''}</span>
+          </div>
+        </div>
+        <div class="af"><label>Timer (Sek.) \u2014 leer = Standard (${S.timers[pi]||30}s)</label><input class="ainp" type="number" id="qtm-${ci}-${pi}" value="${q.timer||''}" min="5" max="600" placeholder="Standard"></div>
       </div>`;
     });
     card.innerHTML=html;
@@ -1788,15 +1875,30 @@ function handleMediaFile(ci,pi,input){
   if(nameEl) nameEl.textContent=`✓ ${file.name}`;
 }
 
+function handleAnswerMediaFile(ci,pi,input){
+  const file=input.files[0];
+  if(!file) return;
+  const key=`ans-${ci}-${pi}`;
+  const nameEl=document.getElementById(`qamfile-name-${ci}-${pi}`);
+  const old=_mediaStore.get(key);
+  if(old) URL.revokeObjectURL(old.objectUrl);
+  const objectUrl=URL.createObjectURL(file);
+  _mediaStore.set(key,{file,objectUrl});
+  const ta=document.getElementById(`qam-${ci}-${pi}`);
+  if(ta) ta.value=objectUrl;
+  if(nameEl) nameEl.textContent=`✓ ${file.name}`;
+}
+
 function onTC(ci,pi){
   const t=document.getElementById(`qt-${ci}-${pi}`).value;
   document.getElementById(`px-row-${ci}-${pi}`).style.display=t==='image'?'':'none';
   document.getElementById(`qtxt-row-${ci}-${pi}`).style.display=t!=='text'?'':'none';
   document.getElementById(`ql-${ci}-${pi}`).textContent=t==='text'?'Frage':'Medien-URL';
-  document.getElementById(`qq-${ci}-${pi}`).placeholder=t==='text'?'Frage eingeben …':'URL eingeben …';
+  document.getElementById(`qq-${ci}-${pi}`).placeholder=t==='text'?'Frage eingeben \u2026':'URL eingeben \u2026';
   const isMedia=t==='video'||t==='audio';
   document.getElementById(`media-opts-${ci}-${pi}`).style.display=isMedia?'':'none';
   document.getElementById(`file-row-${ci}-${pi}`).style.display=t!=='text'?'':'none';
+  document.getElementById(`ansmedia-row-${ci}-${pi}`).style.display=t==='text'?'':'none';
   const fi=document.getElementById(`qfile-${ci}-${pi}`);
   if(fi) fi.accept=t==='image'?'image/*':t==='video'?'video/*':'audio/*';
 }
@@ -1898,6 +2000,7 @@ function saveQContent(){
       q.question=document.getElementById(`qq-${ci}-${pi}`)?.value||'';
       q.questionText=document.getElementById(`qqtxt-${ci}-${pi}`)?.value||'';
       q.answer  =document.getElementById(`qa-${ci}-${pi}`)?.value||'';
+      q.answerMedia=document.getElementById(`qam-${ci}-${pi}`)?.value||'';
       const tv  =document.getElementById(`qtm-${ci}-${pi}`)?.value;
       q.timer   =tv?parseInt(tv):null;
       const pc  =document.getElementById(`qpx-${ci}-${pi}`);
