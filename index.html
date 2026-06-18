@@ -337,7 +337,7 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
         <input type="file" accept=".json" id="json-upload-inp" style="display:none" onchange="handleJsonUpload(event)">
       </label>
       <div id="json-loaded-name" style="display:none;text-align:center;font-size:.78rem;color:#90ee90;margin-bottom:8px"></div>
-      <button class="setup-btn" id="json-continue-btn" onclick="goTheme()" disabled>Weiter →</button>
+      <button class="setup-btn" id="json-continue-btn" onclick="goCount()" disabled>Weiter →</button>
     </div>
     <div id="step-count" style="display:none">
       <label class="setup-label">Wie viele Teams spielen mit?</label>
@@ -954,7 +954,7 @@ function renderThemePicker(){
 }
 function goJson(){
   document.getElementById('step-json').style.display='block';
-  document.getElementById('step-theme').style.display='none';
+  document.getElementById('step-theme').style.display='none'; // Theme-Auswahl wird im Setup übersprungen
   document.getElementById('step-count').style.display='none';
   document.getElementById('step-names').style.display='none';
   const hint=document.getElementById('json-cache-hint');
