@@ -342,6 +342,19 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
     <div id="step-count" style="display:none">
       <label class="setup-label">Wie viele Teams spielen mit?</label>
       <input class="setup-input" type="number" id="tc-inp" min="1" max="10" value="2">
+      <label class="setup-label" style="margin-top:14px">Spielmodus:</label>
+      <div class="mode-cards">
+        <div class="mode-card msel" id="mc-team" onclick="selectMode('team')">
+          <span class="mode-card-icon">👥</span>
+          <div class="mode-card-name">Team</div>
+          <div class="mode-card-desc">Mehrere Teams können Punkte für eine Frage erhalten</div>
+        </div>
+        <div class="mode-card" id="mc-vs" onclick="selectMode('vs')">
+          <span class="mode-card-icon">⚔️</span>
+          <div class="mode-card-name">VS</div>
+          <div class="mode-card-desc">Nur 1 Team kann punkten – Weitergabe &amp; Abzug bei falscher Antwort</div>
+        </div>
+      </div>
       <button class="setup-btn" onclick="goNames()">Weiter →</button>
     </div>
     <div id="step-names" style="display:none">
@@ -358,6 +371,7 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
     <div class="qhdr-stars" id="qhdr-stars">★ ★ ★ ★ ★ ★ ★</div>
     <div class="qhdr-title" id="qhdr-title">Trivia Quiz</div>
   </div>
+  <span id="mode-badge">👥 Team</span>
   <button class="settings-fab" onclick="showSettings()">⚙ Einstellungen</button>
   <div class="board-wrap">
     <table class="board-table" id="board"></table>
@@ -380,11 +394,12 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
       <div class="ans-txt" id="ans-txt"></div>
     </div>
     <div class="award-sec" id="award-sec" style="display:none">
-      <div class="award-lbl">Punkte vergeben an (jedes Team nur einmal):</div>
+      <div class="award-lbl" id="award-lbl">Punkte vergeben an (jedes Team nur einmal):</div>
       <div class="award-btns" id="award-btns"></div>
     </div>
     <div class="mftr">
       <button class="btn btn-gold" id="btn-reveal" onclick="revealAnswer()">Antwort zeigen</button>
+      <button class="btn btn-mod-peek" onclick="showModPeek()" title="Antwort nur für Moderator anzeigen">👁 Antwort prüfen</button>
       <button class="btn btn-out" onclick="closeQ()">✕ Schließen</button>
       <div class="timer-wrap">
         <svg class="tcircle" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -559,6 +574,15 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
   <img id="lightbox-img" src="" alt="">
 </div>
 
+<!-- ════════════ MODERATOR PEEK ════════════ -->
+<div id="mod-peek-overlay" style="display:none" onclick="closeModPeek()">
+  <div class="mod-peek-box" onclick="event.stopPropagation()">
+    <div class="mod-peek-lbl">🔒 Nur Moderator · Antwort</div>
+    <div class="mod-peek-ans" id="mod-peek-ans"></div>
+    <button class="mod-peek-close" onclick="closeModPeek()">✕ Schließen</button>
+  </div>
+</div>
+
 <script>
 // ════════════════════════════════════════════════════════
 //  CONSTANTS & DEFAULTS
@@ -655,6 +679,10 @@ const S = {
   musicVolume:0.5,
   multipliers:[],          // [{at:30, factor:2}, ...]
   appliedMultipliers:[],   // indices of already-triggered multipliers
+  mode:'team',             // 'team' | 'vs'
+  vsPhase:1,               // 1=vollpunkte, 2=weitergabe/halbpunkte
+  vsEliminated:new Set(),  // team-indices that answered wrong this question
+  vsAwarded:false,         // true once a team answered correctly
 };
 
 // ════════════════════════════════════════════════════════
@@ -1013,6 +1041,8 @@ function goCount(){
   document.getElementById('step-names').style.display='none';
   document.getElementById('step-count').style.display='block';
   document.getElementById('tc-inp').focus();
+  // Sync mode card highlight to current S.mode
+  syncModeCards();
 }
 function goNames(){
   const n=Math.min(Math.max(parseInt(document.getElementById('tc-inp').value)||2,1),10);
@@ -1033,6 +1063,8 @@ function goNames(){
 function startGame(){
   S.teams=Array.from(document.querySelectorAll('#tni .setup-input'))
     .map(i=>({name:i.value.trim()||i.placeholder,score:0}));
+  // S.mode already set via selectMode() during setup
+  updateModeBadge();
   hide('setup-screen');
   show('quiz-screen');
   showSnow();
@@ -1464,6 +1496,10 @@ function openQ(ci,pi){
   hideSnow();
   S.cur={ci,pi};
   S.awardedTeams=new Set();
+  // Reset VS state for this question
+  S.vsPhase=1;
+  S.vsEliminated=new Set();
+  S.vsAwarded=false;
   const cat=S.cats[ci];
   const pts=S.pts[pi];
   const q=(S.qs[ci]&&S.qs[ci][pi])||defQ(ci,pi);
@@ -1626,17 +1662,22 @@ function revealAnswer(){
       requestAnimationFrame(()=>requestAnimationFrame(()=>{img.style.opacity='1';}));
     }
   }
-  const btns=document.getElementById('award-btns');
-  btns.innerHTML='';
-  S.teams.forEach((t,i)=>{
-    const b=document.createElement('button');
-    b.className='abt';
-    b.id=`ab${i}`;
-    b.textContent=`🏆 ${t.name}`;
-    b.onclick=function(){awardPts(i,this);};
-    btns.appendChild(b);
-  });
-  document.getElementById('award-sec').style.display='block';
+  if(S.mode==='vs'){
+    renderVSAward();
+  } else {
+    const btns=document.getElementById('award-btns');
+    btns.innerHTML='';
+    document.getElementById('award-lbl').textContent='Punkte vergeben an (jedes Team nur einmal):';
+    S.teams.forEach((t,i)=>{
+      const b=document.createElement('button');
+      b.className='abt';
+      b.id=`ab${i}`;
+      b.textContent=`🏆 ${t.name}`;
+      b.onclick=function(){awardPts(i,this);};
+      btns.appendChild(b);
+    });
+    document.getElementById('award-sec').style.display='block';
+  }
   // Show answer media (text type only)
   if(S.cur){
     const q=(S.qs[S.cur.ci]&&S.qs[S.cur.ci][S.cur.pi])||defQ(S.cur.ci,S.cur.pi);
@@ -1663,6 +1704,163 @@ function awardPts(idx,btn){
   btn.textContent=`✓ ${S.teams[idx].name}`;
   toast(`+${pts} Punkte für ${S.teams[idx].name}!`);
   confetti();
+}
+
+
+// ════════════════════════════════════════════════════════
+//  MODE HELPERS
+// ════════════════════════════════════════════════════════
+function selectMode(m){
+  S.mode=m;
+  syncModeCards();
+}
+function syncModeCards(){
+  ['team','vs'].forEach(id=>{
+    const c=document.getElementById('mc-'+id);
+    if(c) c.classList.toggle('msel',S.mode===id);
+  });
+}
+function updateModeBadge(){
+  const b=document.getElementById('mode-badge');
+  if(!b) return;
+  if(S.mode==='vs'){
+    b.textContent='⚔️ VS';
+    b.classList.add('vs-active');
+  } else {
+    b.textContent='👥 Team';
+    b.classList.remove('vs-active');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  MODERATOR PEEK
+// ════════════════════════════════════════════════════════
+function showModPeek(){
+  const q=S.cur?(S.qs[S.cur.ci]&&S.qs[S.cur.ci][S.cur.pi])||null:null;
+  const ans=q?q.answer:'';
+  document.getElementById('mod-peek-ans').textContent=ans||'(Keine Antwort hinterlegt)';
+  document.getElementById('mod-peek-overlay').style.display='flex';
+}
+function closeModPeek(){
+  document.getElementById('mod-peek-overlay').style.display='none';
+}
+
+// ════════════════════════════════════════════════════════
+//  VS MODE – AWARD LOGIC
+// ════════════════════════════════════════════════════════
+function renderVSAward(){
+  const basePts=S.pts[S.cur.pi]*getCurrentMultiplier();
+  const halfPts=Math.max(1,Math.floor(basePts/2));
+  const curPts=S.vsPhase===1?basePts:halfPts;
+  const isHalf=S.vsPhase===2;
+
+  // Label
+  const lbl=document.getElementById('award-lbl');
+  if(lbl) lbl.textContent=isHalf?'↩ Weitergabe – wer versucht es?':'⚔️ Wer hat geantwortet?';
+
+  const btns=document.getElementById('award-btns');
+  btns.innerHTML='';
+
+  // Phase header
+  const hdr=document.createElement('div');
+  hdr.className='vs-phase-hdr'+(isHalf?' half':'');
+  hdr.textContent=isHalf
+    ?`↩ Weitergabe · Halbe Punkte · ${halfPts} Pkte`
+    :`⚔️ VS-Modus · Vollpunkte · ${basePts} Pkte`;
+  btns.appendChild(hdr);
+
+  // Team rows
+  S.teams.forEach((t,i)=>{
+    const row=document.createElement('div');
+    const elim=S.vsEliminated.has(i);
+    row.className='vs-team-row'+(elim?' vs-elim':'');
+    row.id=`vs-row-${i}`;
+
+    const name=document.createElement('span');
+    name.className='vs-team-name';
+    name.textContent=t.name;
+    row.appendChild(name);
+
+    if(S.vsAwarded){
+      // Question settled – show badge only for relevant team
+      const badge=document.createElement('span');
+      badge.className='vs-badge';
+      badge.style.color=elim?'#ff6060':'#90ee90';
+      badge.textContent=elim?'✗ Falsch':'';
+      row.appendChild(badge);
+    } else if(elim){
+      const badge=document.createElement('span');
+      badge.className='vs-badge';
+      badge.style.color='#ff6060';
+      badge.textContent='✗ Falsch';
+      row.appendChild(badge);
+    } else {
+      const btnR=document.createElement('button');
+      btnR.className='vs-btn-right';
+      btnR.textContent=`✓ +${curPts}`;
+      btnR.onclick=()=>vsClickRight(i);
+
+      const btnW=document.createElement('button');
+      btnW.className='vs-btn-wrong';
+      btnW.textContent=`✗ −${curPts}`;
+      btnW.onclick=()=>vsClickWrong(i);
+
+      row.appendChild(btnR);
+      row.appendChild(btnW);
+    }
+
+    btns.appendChild(row);
+  });
+
+  document.getElementById('award-sec').style.display='block';
+}
+
+function vsClickRight(idx){
+  if(S.vsAwarded||S.vsEliminated.has(idx)) return;
+  const basePts=S.pts[S.cur.pi]*getCurrentMultiplier();
+  const halfPts=Math.max(1,Math.floor(basePts/2));
+  const curPts=S.vsPhase===1?basePts:halfPts;
+  S.vsAwarded=true;
+  bumpScore(idx,curPts);
+  toast(`✓ +${curPts} Punkte für ${S.teams[idx].name}!`);
+  confetti();
+  // Update the winner row visually
+  const row=document.getElementById(`vs-row-${idx}`);
+  if(row){
+    row.classList.add('vs-won');
+    row.querySelectorAll('.vs-btn-right,.vs-btn-wrong').forEach(b=>b.remove());
+    const badge=document.createElement('span');
+    badge.className='vs-badge';
+    badge.style.color='#90ee90';
+    badge.textContent='✓ Richtig';
+    row.appendChild(badge);
+    // Disable buttons in all other rows
+    document.querySelectorAll('.vs-btn-right,.vs-btn-wrong').forEach(b=>{b.disabled=true;});
+  }
+}
+
+function vsClickWrong(idx){
+  if(S.vsAwarded||S.vsEliminated.has(idx)) return;
+  const basePts=S.pts[S.cur.pi]*getCurrentMultiplier();
+  const halfPts=Math.max(1,Math.floor(basePts/2));
+  const curPts=S.vsPhase===1?basePts:halfPts;
+  S.vsEliminated.add(idx);
+  bumpScore(idx,-curPts);
+  toast(`✗ −${curPts} Punkte für ${S.teams[idx].name}`);
+
+  // Count remaining eligible teams
+  const remaining=S.teams.filter((_,i)=>!S.vsEliminated.has(i));
+
+  if(S.vsPhase===1 && remaining.length>0){
+    S.vsPhase=2; // upgrade to weitergabe / half points
+    renderVSAward();
+  } else if(remaining.length>0){
+    renderVSAward(); // re-render with updated eliminated set
+  } else {
+    // All teams exhausted
+    renderVSAward();
+    toast('Niemand hat die Frage richtig beantwortet');
+  }
 }
 
 function closeQ(){
@@ -2324,6 +2522,10 @@ function doRestart(){
     S.teams=[];
     S.cur=null;
     S.appliedMultipliers=[];
+    S.mode='team';
+    S.vsPhase=1;
+    S.vsEliminated=new Set();
+    S.vsAwarded=false;
     stopTimer();
     hideSnow();
     hide('settings-screen');
@@ -2676,6 +2878,12 @@ applyTheme(S.theme,false);
 updateTitleDisplay();
 renderThemePicker();
 document.getElementById('tc-inp').addEventListener('keydown',e=>{if(e.key==='Enter')goNames();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const peek=document.getElementById('mod-peek-overlay');
+    if(peek&&peek.style.display!=='none'){closeModPeek();e.stopPropagation();}
+  }
+});
 // Auto-save: trigger on any input or change inside the settings panel
 document.getElementById('settings-screen').addEventListener('input', scheduleAutoSave);
 document.getElementById('settings-screen').addEventListener('change', scheduleAutoSave);
