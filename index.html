@@ -2218,12 +2218,35 @@ async function exportQ(){
       return q;
     }))
   ));
-  const blob=new Blob([JSON.stringify({qs:exportQs,timers:S.timers,pts:S.pts,cats:S.cats,theme:S.theme,title:S.title,multipliers:S.multipliers,timerVolume:S.timerVolume,videoVolume:S.videoVolume,musicVolume:S.musicVolume},null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='quiz-daten.json';
-  a.click();URL.revokeObjectURL(url);
-  toast('📤 Exportiert!');
+  const json=JSON.stringify({qs:exportQs,timers:S.timers,pts:S.pts,cats:S.cats,theme:S.theme,title:S.title,multipliers:S.multipliers,timerVolume:S.timerVolume,videoVolume:S.videoVolume,musicVolume:S.musicVolume},null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  // Dateiname-Vorschlag aus Quiz-Titel ableiten
+  const safeName=(S.title||'quiz-daten').replace(/[^\w\s\-äöüÄÖÜß]/g,'').trim().replace(/\s+/g,'-')||'quiz-daten';
+  const suggestedName=safeName+'.json';
+  // File System Access API (Chrome/Edge) → echter Speichern-Dialog
+  if(window.showSaveFilePicker){
+    try{
+      const fh=await window.showSaveFilePicker({
+        suggestedName,
+        types:[{description:'Quiz JSON',accept:{'application/json':['.json']}}],
+        startIn:'downloads',
+      });
+      const writable=await fh.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      toast('📤 Exportiert!');
+    }catch(e){
+      // Abgebrochen vom Nutzer – kein Fehler anzeigen
+      if(e.name!=='AbortError') toast('❌ Export fehlgeschlagen');
+    }
+  } else {
+    // Fallback für Firefox & Safari: klassischer Download-Link
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=suggestedName;
+    a.click();URL.revokeObjectURL(url);
+    toast('📤 Exportiert!');
+  }
 }
 function importQ(){document.getElementById('imp-file').click();}
 function handleImport(e){
