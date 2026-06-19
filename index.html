@@ -1212,6 +1212,27 @@ function buildMediaEl(q){
     wrapper.appendChild(placeholder);
     wrapper.appendChild(titleCover);
 
+    // Schwarzer Balken oben auch im Vollbildmodus
+    const fsBar=document.createElement('div');
+    fsBar.style.cssText='display:none;position:fixed;top:0;left:0;right:0;height:62px;background:#000;z-index:2147483647;pointer-events:none';
+    document.body.appendChild(fsBar);
+    const onFsChange=()=>{
+      const isFs=!!(document.fullscreenElement||document.webkitFullscreenElement);
+      fsBar.style.display=isFs?'block':'none';
+    };
+    document.addEventListener('fullscreenchange',onFsChange);
+    document.addEventListener('webkitfullscreenchange',onFsChange);
+    // Aufräumen wenn Wrapper entfernt wird
+    const fsObs=new MutationObserver(()=>{
+      if(!document.body.contains(wrapper)){
+        fsBar.remove();
+        document.removeEventListener('fullscreenchange',onFsChange);
+        document.removeEventListener('webkitfullscreenchange',onFsChange);
+        fsObs.disconnect();
+      }
+    });
+    fsObs.observe(document.body,{childList:true,subtree:true});
+
     // Lautstärke: Musik-Lautstärke im Musik-Modus, sonst Video-Lautstärke
     const vol=Math.round(Math.max(0,Math.min(1,isMusicMode?S.musicVolume:S.videoVolume))*100);
     const playerVars={controls:1,disablekb:1,fs:1,modestbranding:1,rel:0,enablejsapi:1,start:start||0};
