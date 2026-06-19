@@ -1598,6 +1598,9 @@ function openQ(ci,pi){
   document.getElementById('ans-txt').textContent=q.answer||'(Keine Antwort hinterlegt)';
   document.getElementById('btn-reveal').disabled=false;
 
+  // Im Team-Modus ist der "Antwort prüfen"-Button nicht nötig
+  document.querySelector('.btn-mod-peek').style.display=S.mode==='team'?'none':'';
+
   document.getElementById('q-overlay').style.display='flex';
   const timerSec = q.timer||S.timers[pi]||30;
   const isMedia = (q.type==='video'||q.type==='audio') && q.question;
