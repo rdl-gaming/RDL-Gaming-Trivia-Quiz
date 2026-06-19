@@ -1675,7 +1675,7 @@ function buildAnswerMedia(url){
   if(ytId(url)){
     const fakeQ={type:'video',question:url,startTime:null,duration:null,questionText:''};
     const wrap=buildMediaEl(fakeQ);
-    if(wrap){ wrap.style.marginTop='10px'; wrap.style.width='100%'; }
+    if(wrap){ wrap.style.marginTop='10px'; wrap.style.width='100%'; wrap.style.maxHeight='100%'; wrap.style.flexShrink='1'; wrap.style.minHeight='0'; }
     return wrap;
   }
   const lower=url.toLowerCase().split('?')[0];
@@ -1768,7 +1768,7 @@ function revealAnswer(){
       if(prev) prev.remove();
       const mediaWrap=document.createElement('div');
       mediaWrap.id='ans-media-wrap';
-      mediaWrap.style.cssText='margin-top:10px;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;width:100%';
+      mediaWrap.style.cssText='margin-top:10px;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%';
       const el=buildAnswerMedia(q.answerMedia);
       if(el){
         mediaWrap.appendChild(el);
