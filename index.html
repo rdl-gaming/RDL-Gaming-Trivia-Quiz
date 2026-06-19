@@ -1212,30 +1212,43 @@ function buildMediaEl(q){
     wrapper.appendChild(placeholder);
     wrapper.appendChild(titleCover);
 
-    // Schwarzer Balken oben auch im Vollbildmodus
-    const fsBar=document.createElement('div');
-    fsBar.style.cssText='display:none;position:fixed;top:0;left:0;right:0;height:62px;background:#000;z-index:2147483647;pointer-events:none';
-    document.body.appendChild(fsBar);
-    const onFsChange=()=>{
-      const isFs=!!(document.fullscreenElement||document.webkitFullscreenElement);
-      fsBar.style.display=isFs?'block':'none';
-    };
-    document.addEventListener('fullscreenchange',onFsChange);
-    document.addEventListener('webkitfullscreenchange',onFsChange);
-    // Aufräumen wenn Wrapper entfernt wird
-    const fsObs=new MutationObserver(()=>{
-      if(!document.body.contains(wrapper)){
-        fsBar.remove();
-        document.removeEventListener('fullscreenchange',onFsChange);
-        document.removeEventListener('webkitfullscreenchange',onFsChange);
-        fsObs.disconnect();
-      }
-    });
-    fsObs.observe(document.body,{childList:true,subtree:true});
+    // Eigener Vollbild-Button (YouTubes nativer fs wird deaktiviert, da fixed-Elemente
+    // im Browser-Vollbild des iframes nicht sichtbar sind)
+    if(!isMusicMode){
+      const fsBtn=document.createElement('div');
+      fsBtn.title='Vollbild';
+      fsBtn.style.cssText='position:absolute;bottom:10px;right:10px;z-index:5;background:rgba(0,0,0,.75);color:#fff;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:1rem;line-height:1;opacity:0;transition:opacity .2s;user-select:none';
+      fsBtn.textContent='\u26F6';
+      wrapper.addEventListener('mouseenter',()=>{ fsBtn.style.opacity='1'; });
+      wrapper.addEventListener('mouseleave',()=>{ fsBtn.style.opacity='0'; });
+      const enterFs=()=>{ const req=wrapper.requestFullscreen||wrapper.webkitRequestFullscreen; if(req) req.call(wrapper); };
+      const exitFs=()=>{ const ex=document.exitFullscreen||document.webkitExitFullscreen; if(ex) ex.call(document); };
+      fsBtn.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        if(document.fullscreenElement||document.webkitFullscreenElement) exitFs(); else enterFs();
+      });
+      const onFsChange=()=>{
+        const isFs=!!(document.fullscreenElement||document.webkitFullscreenElement);
+        fsBtn.textContent=isFs?'\u2715':'\u26F6';
+        titleCover.style.height=isFs?'60px':'17%';
+      };
+      document.addEventListener('fullscreenchange',onFsChange);
+      document.addEventListener('webkitfullscreenchange',onFsChange);
+      wrapper.appendChild(fsBtn);
+      const fsObs=new MutationObserver(()=>{
+        if(!document.body.contains(wrapper)){
+          document.removeEventListener('fullscreenchange',onFsChange);
+          document.removeEventListener('webkitfullscreenchange',onFsChange);
+          fsObs.disconnect();
+        }
+      });
+      fsObs.observe(document.body,{childList:true,subtree:true});
+    }
 
     // Lautstärke: Musik-Lautstärke im Musik-Modus, sonst Video-Lautstärke
     const vol=Math.round(Math.max(0,Math.min(1,isMusicMode?S.musicVolume:S.videoVolume))*100);
-    const playerVars={controls:1,disablekb:1,fs:1,modestbranding:1,rel:0,enablejsapi:1,start:start||0};
+    // fs:0 → YouTubes eigenen Vollbild-Button deaktivieren; wir stellen einen eigenen bereit
+    const playerVars={controls:1,disablekb:1,fs:0,modestbranding:1,rel:0,enablejsapi:1,start:start||0};
     if(dur>0) playerVars.end=(start||0)+dur;
 
     const spawnPlayer=()=>{
