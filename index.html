@@ -1248,7 +1248,7 @@ function buildMediaEl(q){
     // Lautstärke: Musik-Lautstärke im Musik-Modus, sonst Video-Lautstärke
     const vol=Math.round(Math.max(0,Math.min(1,isMusicMode?S.musicVolume:S.videoVolume))*100);
     // fs:0 → YouTubes eigenen Vollbild-Button deaktivieren; wir stellen einen eigenen bereit
-    const playerVars={controls:0,disablekb:0,fs:0,modestbranding:1,rel:0,enablejsapi:1,start:start||0};
+    const playerVars={controls:0,disablekb:1,fs:0,modestbranding:1,rel:0,enablejsapi:1,start:start||0};
     if(dur>0) playerVars.end=(start||0)+dur;
 
     const spawnPlayer=()=>{
