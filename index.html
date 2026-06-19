@@ -1113,6 +1113,10 @@ function startGame(){
   showSnow();
   renderBoard();
   renderScores();
+  // Im VS-Modus: Moderator-Fenster sofort mit Platzhalter oeffnen
+  if(S.mode==='vs'){
+    _openModPeekPopup('– Noch keine Frage ausgespielt –','','');
+  }
 }
 
 // ════════════════════════════════════════════════════════
@@ -1818,12 +1822,8 @@ function updateModeBadge(){
 // ════════════════════════════════════════════════════════
 //  MODERATOR PEEK
 // ════════════════════════════════════════════════════════
-function showModPeek(){
-  const q=S.cur?(S.qs[S.cur.ci]&&S.qs[S.cur.ci][S.cur.pi])||null:null;
-  const ans=(q&&q.answer)||'(Keine Antwort hinterlegt)';
-  const cat=S.cur&&S.cats[S.cur.ci]?`${S.cats[S.cur.ci].emoji} ${S.cats[S.cur.ci].name}`:'';
-  const pts=S.cur!=null?S.pts[S.cur.pi]:'';
-  const html=`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8">
+function _buildModPeekHtml(ans, cat, pts){
+  return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>🔒 Moderator – Antwort</title>
 <style>
@@ -1836,10 +1836,13 @@ body{background:#0a0000;color:#fff;font-family:'Segoe UI',sans-serif;display:fle
 </style></head><body>
 <div class="card">
   <div class="lbl">🔒 Nur Moderator · Antwort</div>
-  <div class="cat">${cat}${pts?' · '+pts+' Punkte':''}</div>
-  <div class="ans">${ans.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+  ${cat||pts?`<div class="cat">${cat}${pts?' · '+pts+' Punkte':''}</div>`:''}
+  <div class="ans">${(ans||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
 </div>
 </body></html>`;
+}
+function _openModPeekPopup(ans, cat, pts){
+  const html=_buildModPeekHtml(ans,cat,pts);
   const popup=window.open('','modpeek','width=500,height=280,toolbar=no,menubar=no,location=no,status=no,scrollbars=yes');
   if(popup){
     popup.document.open();
@@ -1850,6 +1853,13 @@ body{background:#0a0000;color:#fff;font-family:'Segoe UI',sans-serif;display:fle
     document.getElementById('mod-peek-ans').textContent=ans;
     document.getElementById('mod-peek-overlay').style.display='flex';
   }
+}
+function showModPeek(){
+  const q=S.cur?(S.qs[S.cur.ci]&&S.qs[S.cur.ci][S.cur.pi])||null:null;
+  const ans=(q&&q.answer)||'(Keine Antwort hinterlegt)';
+  const cat=S.cur&&S.cats[S.cur.ci]?`${S.cats[S.cur.ci].emoji} ${S.cats[S.cur.ci].name}`:'';
+  const pts=S.cur!=null?S.pts[S.cur.pi]:'';
+  _openModPeekPopup(ans, cat, pts);
 }
 function closeModPeek(){
   document.getElementById('mod-peek-overlay').style.display='none';
