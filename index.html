@@ -1858,7 +1858,9 @@ function showModPeek(){
   const q=S.cur?(S.qs[S.cur.ci]&&S.qs[S.cur.ci][S.cur.pi])||null:null;
   const ans=(q&&q.answer)||'(Keine Antwort hinterlegt)';
   const cat=S.cur&&S.cats[S.cur.ci]?`${S.cats[S.cur.ci].emoji} ${S.cats[S.cur.ci].name}`:'';
-  const pts=S.cur!=null?S.pts[S.cur.pi]:'';
+  const mult=getCurrentMultiplier();
+  const rawPts=S.cur!=null?S.pts[S.cur.pi]:null;
+  const pts=rawPts!=null?(mult>1?`${rawPts*mult} (×${mult})`:`${rawPts}`):'';
   _openModPeekPopup(ans, cat, pts);
 }
 function closeModPeek(){
