@@ -310,6 +310,48 @@ input[type="range"].vol-slider::-moz-range-track{height:6px;border-radius:4px;ba
 input[type="range"].vol-slider::-moz-range-progress{height:6px;border-radius:4px;background:var(--gold)}
 input[type="color"]::-webkit-color-swatch-wrapper{padding:0}
 input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgba(255,255,255,.2)}
+
+/* ── MODE SELECTOR ── */
+.mode-cards{display:flex;gap:10px;margin-bottom:14px}
+.mode-card{flex:1;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 10px 14px;text-align:center;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;opacity:.55}
+.mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.06) 0%,transparent 55%);pointer-events:none}
+.mode-card:hover{opacity:.8;border-color:rgba(212,168,67,.45);transform:translateY(-2px)}
+.mode-card.msel{border-color:var(--gold);background:rgba(212,168,67,.16);box-shadow:0 0 28px rgba(212,168,67,.4),inset 0 1px 0 rgba(255,255,255,.1);transform:translateY(-3px) scale(1.03);opacity:1}
+.mode-card.msel::after{content:'✓ Ausgewählt';position:absolute;top:7px;right:8px;font-size:.58rem;font-weight:700;color:var(--gold);letter-spacing:.4px}
+.mode-card-icon{font-size:2rem;margin-bottom:6px;display:block;transition:transform .25s}
+.mode-card.msel .mode-card-icon{transform:scale(1.15)}
+.mode-card-name{font-size:.84rem;font-weight:700;color:var(--cream);margin-bottom:4px}
+.mode-card.msel .mode-card-name{color:var(--gold)}
+.mode-card-desc{font-size:.66rem;color:var(--silver);line-height:1.35}
+
+/* ── VS MODE award UI ── */
+.vs-phase-hdr{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,67,.2);color:var(--gold)}
+.vs-phase-hdr.half{color:#ff9a3c;border-color:rgba(255,154,60,.25)}
+.vs-team-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.vs-team-row:last-child{border-bottom:none}
+.vs-team-name{flex:1;font-size:.88rem;font-weight:700;color:var(--cream);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vs-team-row.vs-elim .vs-team-name{color:var(--silver);opacity:.5;text-decoration:line-through}
+.vs-team-row.vs-won .vs-team-name{color:#90ee90}
+.vs-badge{font-size:.75rem;font-weight:700;flex-shrink:0}
+.vs-btn-right{padding:5px 13px;border-radius:20px;border:1px solid #4caf50;background:rgba(46,142,70,.2);color:#90ee90;cursor:pointer;font-size:.77rem;font-family:'Nunito',sans-serif;font-weight:700;transition:all .2s;flex-shrink:0}
+.vs-btn-right:hover:not(:disabled){background:rgba(46,142,70,.45);transform:translateY(-1px)}
+.vs-btn-wrong{padding:5px 13px;border-radius:20px;border:1px solid var(--red);background:rgba(192,57,43,.2);color:#ff8080;cursor:pointer;font-size:.77rem;font-family:'Nunito',sans-serif;font-weight:700;transition:all .2s;flex-shrink:0}
+.vs-btn-wrong:hover:not(:disabled){background:rgba(192,57,43,.45);transform:translateY(-1px)}
+.vs-btn-right:disabled,.vs-btn-wrong:disabled{opacity:.22;cursor:default;pointer-events:none}
+
+/* ── MODE BADGE (quiz screen) ── */
+#mode-badge{position:fixed;top:10px;left:14px;background:rgba(212,168,67,.12);border:1px solid rgba(212,168,67,.4);color:var(--gold);padding:5px 12px;border-radius:20px;font-size:.72rem;font-family:'Nunito',sans-serif;font-weight:700;z-index:100;letter-spacing:.4px;pointer-events:none}
+#mode-badge.vs-active{background:rgba(192,57,43,.15);border-color:rgba(192,57,43,.5);color:#ff8080}
+
+/* ── MODERATOR PEEK OVERLAY ── */
+#mod-peek-overlay{position:fixed;inset:0;z-index:1800;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
+.mod-peek-box{background:linear-gradient(155deg,#1a0000,#000);border:2px solid #8b0000;border-radius:18px;padding:28px 32px;max-width:500px;width:92%;text-align:center;box-shadow:0 0 60px rgba(139,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05)}
+.mod-peek-lbl{font-size:.62rem;color:#ff4444;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:12px}
+.mod-peek-ans{font-family:'Playfair Display',serif;font-size:1.45rem;color:#fff;line-height:1.5;margin-bottom:18px;word-break:break-word}
+.mod-peek-close{padding:8px 24px;border-radius:20px;border:1px solid #8b0000;background:rgba(139,0,0,.3);color:#ff8080;cursor:pointer;font-size:.8rem;font-family:'Nunito',sans-serif;font-weight:700;transition:all .2s}
+.mod-peek-close:hover{background:rgba(139,0,0,.55)}
+.btn-mod-peek{background:rgba(80,0,0,.4)!important;border:1px solid rgba(139,0,0,.7)!important;color:#ff8080!important}
+.btn-mod-peek:hover{background:rgba(139,0,0,.4)!important;transform:translateY(-2px)}
 </style>
 </head>
 <body>
@@ -352,7 +394,7 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
         <div class="mode-card" id="mc-vs" onclick="selectMode('vs')">
           <span class="mode-card-icon">⚔️</span>
           <div class="mode-card-name">VS</div>
-          <div class="mode-card-desc">Nur 1 Team kann punkten – Weitergabe &amp; Abzug bei falscher Antwort</div>
+          <div class="mode-card-desc">Nur ein Team kann pro Frage punkten.<br>Falsche Antwort: Punktabzug und Weitergabe an die anderen Teams für halbe Punkte.</div>
         </div>
       </div>
       <button class="setup-btn" onclick="goNames()">Weiter →</button>
@@ -1820,6 +1862,7 @@ function vsClickRight(idx){
   const basePts=S.pts[S.cur.pi]*getCurrentMultiplier();
   const halfPts=Math.max(1,Math.floor(basePts/2));
   const curPts=S.vsPhase===1?basePts:halfPts;
+  const wasPhase2=S.vsPhase===2;
   S.vsAwarded=true;
   bumpScore(idx,curPts);
   toast(`✓ +${curPts} Punkte für ${S.teams[idx].name}!`);
@@ -1834,9 +1877,10 @@ function vsClickRight(idx){
     badge.style.color='#90ee90';
     badge.textContent='✓ Richtig';
     row.appendChild(badge);
-    // Disable buttons in all other rows
     document.querySelectorAll('.vs-btn-right,.vs-btn-wrong').forEach(b=>{b.disabled=true;});
   }
+  // Nach Phase 2: Frage automatisch abschließen
+  if(wasPhase2) setTimeout(()=>closeQ(),1200);
 }
 
 function vsClickWrong(idx){
@@ -1844,22 +1888,29 @@ function vsClickWrong(idx){
   const basePts=S.pts[S.cur.pi]*getCurrentMultiplier();
   const halfPts=Math.max(1,Math.floor(basePts/2));
   const curPts=S.vsPhase===1?basePts:halfPts;
+  const wasPhase2=S.vsPhase===2;
   S.vsEliminated.add(idx);
   bumpScore(idx,-curPts);
   toast(`✗ −${curPts} Punkte für ${S.teams[idx].name}`);
 
-  // Count remaining eligible teams
-  const remaining=S.teams.filter((_,i)=>!S.vsEliminated.has(i));
-
-  if(S.vsPhase===1 && remaining.length>0){
-    S.vsPhase=2; // upgrade to weitergabe / half points
+  if(wasPhase2){
+    // Phase 2 abgeschlossen → Frage beenden
+    const remaining=S.teams.filter((_,i)=>!S.vsEliminated.has(i));
+    if(remaining.length===0) toast('Niemand hat die Frage richtig beantwortet');
     renderVSAward();
-  } else if(remaining.length>0){
-    renderVSAward(); // re-render with updated eliminated set
+    setTimeout(()=>closeQ(),1200);
   } else {
-    // All teams exhausted
-    renderVSAward();
-    toast('Niemand hat die Frage richtig beantwortet');
+    // Phase 1 falsch → Weitergabe (Phase 2)
+    const remaining=S.teams.filter((_,i)=>!S.vsEliminated.has(i));
+    if(remaining.length>0){
+      S.vsPhase=2;
+      renderVSAward();
+    } else {
+      // Nur 1 Team, sofort abschließen
+      toast('Niemand hat die Frage richtig beantwortet');
+      renderVSAward();
+      setTimeout(()=>closeQ(),1200);
+    }
   }
 }
 
