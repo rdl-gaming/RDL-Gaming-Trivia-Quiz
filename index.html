@@ -325,14 +325,15 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
 .mode-card-desc{font-size:.66rem;color:var(--silver);line-height:1.35}
 
 /* ── VS MODE award UI ── */
-.vs-phase-hdr{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,67,.2);color:var(--gold)}
-.vs-phase-hdr.half{color:#ff9a3c;border-color:rgba(255,154,60,.25)}
-.vs-team-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.vs-phase-hdr{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;padding-bottom:10px;color:var(--gold)}
+.vs-phase-hdr.half{color:#ff9a3c}
+.vs-team-row{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .vs-team-row:last-child{border-bottom:none}
-.vs-team-name{flex:1;font-size:.88rem;font-weight:700;color:var(--cream);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vs-team-name{font-size:.88rem;font-weight:700;color:var(--cream)}
 .vs-team-row.vs-elim .vs-team-name{color:var(--silver);opacity:.5;text-decoration:line-through}
 .vs-team-row.vs-won .vs-team-name{color:#90ee90}
-.vs-badge{font-size:.75rem;font-weight:700;flex-shrink:0}
+.vs-badge{font-size:.75rem;font-weight:700}
+.vs-btn-row{display:flex;gap:6px}
 .vs-btn-right{padding:5px 13px;border-radius:20px;border:1px solid #4caf50;background:rgba(46,142,70,.2);color:#90ee90;cursor:pointer;font-size:.77rem;font-family:'Nunito',sans-serif;font-weight:700;transition:all .2s;flex-shrink:0}
 .vs-btn-right:hover:not(:disabled){background:rgba(46,142,70,.45);transform:translateY(-1px)}
 .vs-btn-wrong{padding:5px 13px;border-radius:20px;border:1px solid var(--red);background:rgba(192,57,43,.2);color:#ff8080;cursor:pointer;font-size:.77rem;font-family:'Nunito',sans-serif;font-weight:700;transition:all .2s;flex-shrink:0}
@@ -1709,7 +1710,10 @@ function revealAnswer(){
   } else {
     const btns=document.getElementById('award-btns');
     btns.innerHTML='';
-    document.getElementById('award-lbl').textContent='Punkte vergeben an (jedes Team nur einmal):';
+    btns.style.flexDirection='';
+    btns.style.gap='8px';
+    const awardLbl=document.getElementById('award-lbl');
+    if(awardLbl){awardLbl.style.display='';awardLbl.textContent='Punkte vergeben an (jedes Team nur einmal):';}
     S.teams.forEach((t,i)=>{
       const b=document.createElement('button');
       b.className='abt';
@@ -1798,23 +1802,26 @@ function renderVSAward(){
 
   // Label
   const lbl=document.getElementById('award-lbl');
-  if(lbl) lbl.textContent=isHalf?'↩ Weitergabe – wer versucht es?':'⚔️ Wer hat geantwortet?';
+  if(lbl) lbl.style.display='none';
 
   const btns=document.getElementById('award-btns');
   btns.innerHTML='';
+  btns.style.flexDirection='column';
+  btns.style.gap='0';
 
-  // Phase header
-  const hdr=document.createElement('div');
-  hdr.className='vs-phase-hdr'+(isHalf?' half':'');
-  hdr.textContent=isHalf
-    ?`↩ Weitergabe · Halbe Punkte · ${halfPts} Pkte`
-    :`⚔️ VS-Modus · Vollpunkte · ${basePts} Pkte`;
-  btns.appendChild(hdr);
+  // Phase header: nur bei Weitergabe anzeigen
+  if(isHalf){
+    const hdr=document.createElement('div');
+    hdr.className='vs-phase-hdr half';
+    hdr.textContent=`↩ Weitergabe · Halbe Punkte · ${halfPts} Punkte`;
+    btns.appendChild(hdr);
+  }
 
-  // Team rows
+  // Team rows: alle Teams anzeigen, eliminierte ausgegraut
   S.teams.forEach((t,i)=>{
-    const row=document.createElement('div');
     const elim=S.vsEliminated.has(i);
+
+    const row=document.createElement('div');
     row.className='vs-team-row'+(elim?' vs-elim':'');
     row.id=`vs-row-${i}`;
 
@@ -1823,32 +1830,32 @@ function renderVSAward(){
     name.textContent=t.name;
     row.appendChild(name);
 
-    if(S.vsAwarded){
-      // Question settled – show badge only for relevant team
-      const badge=document.createElement('span');
-      badge.className='vs-badge';
-      badge.style.color=elim?'#ff6060':'#90ee90';
-      badge.textContent=elim?'✗ Falsch':'';
-      row.appendChild(badge);
-    } else if(elim){
+    if(elim){
       const badge=document.createElement('span');
       badge.className='vs-badge';
       badge.style.color='#ff6060';
       badge.textContent='✗ Falsch';
       row.appendChild(badge);
+    } else if(S.vsAwarded){
+      const badge=document.createElement('span');
+      badge.className='vs-badge';
+      badge.style.color='#90ee90';
+      badge.textContent='✓ Richtig';
+      row.appendChild(badge);
     } else {
+      const btnRow=document.createElement('div');
+      btnRow.className='vs-btn-row';
       const btnR=document.createElement('button');
       btnR.className='vs-btn-right';
       btnR.textContent=`✓ +${curPts}`;
       btnR.onclick=()=>vsClickRight(i);
-
       const btnW=document.createElement('button');
       btnW.className='vs-btn-wrong';
       btnW.textContent=`✗ −${curPts}`;
       btnW.onclick=()=>vsClickWrong(i);
-
-      row.appendChild(btnR);
-      row.appendChild(btnW);
+      btnRow.appendChild(btnR);
+      btnRow.appendChild(btnW);
+      row.appendChild(btnRow);
     }
 
     btns.appendChild(row);
