@@ -2851,8 +2851,8 @@ const DOCS = {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #061209;
-    color: #f5edd8;
+    background: var(--doc-bg);
+    color: var(--doc-cream);
     min-height: 100vh;
     padding: 40px 20px;
     line-height: 1.7;
@@ -2863,38 +2863,38 @@ const DOCS = {
   }
   h1 {
     font-size: 2rem;
-    color: #d4a843;
+    color: var(--doc-gold);
     margin-bottom: 8px;
-    border-bottom: 1px solid rgba(212,168,67,.3);
+    border-bottom: 1px solid var(--doc-gold-a3);
     padding-bottom: 12px;
   }
   h2 {
     font-size: 1.05rem;
-    color: #d4a843;
+    color: var(--doc-gold);
     margin: 28px 0 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  p, address { font-size: .92rem; color: #d0c8b8; font-style: normal; }
-  a { color: #d4a843; }
+  p, address { font-size: .92rem; color: var(--doc-text); font-style: normal; }
+  a { color: var(--doc-gold); }
   .placeholder {
     background: rgba(192,57,43,.25);
-    border: 1px dashed #c0392b;
+    border: 1px dashed var(--doc-red);
     border-radius: 6px;
     padding: 2px 8px;
-    color: #ff8c5a;
+    color: var(--doc-red-light);
     font-size: .85rem;
   }
   .note {
     margin-top: 32px;
     padding: 14px 18px;
-    background: rgba(212,168,67,.07);
-    border-left: 3px solid rgba(212,168,67,.5);
+    background: var(--doc-gold-a07);
+    border-left: 3px solid var(--doc-gold-a5);
     border-radius: 4px;
     font-size: .8rem;
-    color: #b0a898;
+    color: var(--doc-dim);
   }
-  .back { display: inline-block; margin-top: 36px; color: #d4a843; font-size: .85rem; text-decoration: none; }
+  .back { display: inline-block; margin-top: 36px; color: var(--doc-gold); font-size: .85rem; text-decoration: none; }
   .back:hover { text-decoration: underline; }
 </style>
 </head>
@@ -2956,48 +2956,48 @@ const DOCS = {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #061209;
-    color: #f5edd8;
+    background: var(--doc-bg);
+    color: var(--doc-cream);
     min-height: 100vh;
     padding: 40px 20px;
     line-height: 1.7;
   }
   .wrap { max-width: 740px; margin: 0 auto; }
-  h1 { font-size: 2rem; color: #d4a843; margin-bottom: 8px; border-bottom: 1px solid rgba(212,168,67,.3); padding-bottom: 12px; }
-  h2 { font-size: 1.05rem; color: #d4a843; margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
-  h3 { font-size: .95rem; color: #f0c060; margin: 18px 0 6px; }
-  p { font-size: .92rem; color: #d0c8b8; margin-bottom: 10px; }
-  ul { font-size: .92rem; color: #d0c8b8; margin: 8px 0 10px 20px; }
+  h1 { font-size: 2rem; color: var(--doc-gold); margin-bottom: 8px; border-bottom: 1px solid var(--doc-gold-a3); padding-bottom: 12px; }
+  h2 { font-size: 1.05rem; color: var(--doc-gold); margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  h3 { font-size: .95rem; color: var(--doc-goldt); margin: 18px 0 6px; }
+  p { font-size: .92rem; color: var(--doc-text); margin-bottom: 10px; }
+  ul { font-size: .92rem; color: var(--doc-text); margin: 8px 0 10px 20px; }
   ul li { margin-bottom: 4px; }
-  a { color: #d4a843; }
+  a { color: var(--doc-gold); }
   .placeholder {
     background: rgba(192,57,43,.25);
-    border: 1px dashed #c0392b;
+    border: 1px dashed var(--doc-red);
     border-radius: 6px;
     padding: 2px 8px;
-    color: #ff8c5a;
+    color: var(--doc-red-light);
     font-size: .85rem;
   }
   .box {
     margin: 10px 0 16px;
     padding: 14px 18px;
     background: rgba(255,255,255,.04);
-    border: 1px solid rgba(212,168,67,.2);
+    border: 1px solid var(--doc-gold-a2);
     border-radius: 10px;
     font-size: .88rem;
-    color: #c0b8a8;
+    color: var(--doc-dim);
   }
-  .box strong { color: #f0c060; }
+  .box strong { color: var(--doc-goldt); }
   .note {
     margin-top: 36px;
     padding: 14px 18px;
-    background: rgba(212,168,67,.07);
-    border-left: 3px solid rgba(212,168,67,.5);
+    background: var(--doc-gold-a07);
+    border-left: 3px solid var(--doc-gold-a5);
     border-radius: 4px;
     font-size: .8rem;
-    color: #b0a898;
+    color: var(--doc-dim);
   }
-  .back { display: inline-block; margin-top: 36px; color: #d4a843; font-size: .85rem; text-decoration: none; }
+  .back { display: inline-block; margin-top: 36px; color: var(--doc-gold); font-size: .85rem; text-decoration: none; }
   .back:hover { text-decoration: underline; }
   .updated { font-size: .78rem; color: #888; margin-top: 6px; }
 </style>
@@ -3160,29 +3160,29 @@ const DOCS = {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #061209;
-    color: #f5edd8;
+    background: var(--doc-bg);
+    color: var(--doc-cream);
     min-height: 100vh;
     padding: 40px 20px;
     line-height: 1.7;
   }
   .wrap { max-width: 740px; margin: 0 auto; }
-  h1 { font-size: 2rem; color: #d4a843; margin-bottom: 8px; border-bottom: 1px solid rgba(212,168,67,.3); padding-bottom: 12px; }
-  h2 { font-size: 1.05rem; color: #d4a843; margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
-  p { font-size: .92rem; color: #d0c8b8; margin-bottom: 10px; }
-  ul { font-size: .92rem; color: #d0c8b8; margin: 8px 0 10px 20px; }
+  h1 { font-size: 2rem; color: var(--doc-gold); margin-bottom: 8px; border-bottom: 1px solid var(--doc-gold-a3); padding-bottom: 12px; }
+  h2 { font-size: 1.05rem; color: var(--doc-gold); margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  p { font-size: .92rem; color: var(--doc-text); margin-bottom: 10px; }
+  ul { font-size: .92rem; color: var(--doc-text); margin: 8px 0 10px 20px; }
   ul li { margin-bottom: 4px; }
-  a { color: #d4a843; }
+  a { color: var(--doc-gold); }
   .box {
     margin: 10px 0 16px;
     padding: 14px 18px;
     background: rgba(255,255,255,.04);
-    border: 1px solid rgba(212,168,67,.2);
+    border: 1px solid var(--doc-gold-a2);
     border-radius: 10px;
     font-size: .88rem;
-    color: #c0b8a8;
+    color: var(--doc-dim);
   }
-  .box strong { color: #f0c060; }
+  .box strong { color: var(--doc-goldt); }
   .updated { font-size: .78rem; color: #888; margin-top: 6px; }
 </style>
 </head>
@@ -3258,27 +3258,27 @@ const DOCS = {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #061209;
-    color: #f5edd8;
+    background: var(--doc-bg);
+    color: var(--doc-cream);
     min-height: 100vh;
     padding: 40px 20px;
     line-height: 1.7;
   }
   .wrap { max-width: 740px; margin: 0 auto; }
-  h1 { font-size: 2rem; color: #d4a843; margin-bottom: 8px; border-bottom: 1px solid rgba(212,168,67,.3); padding-bottom: 12px; }
-  h2 { font-size: 1.05rem; color: #d4a843; margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
-  p { font-size: .92rem; color: #d0c8b8; margin-bottom: 10px; }
-  a { color: #d4a843; }
+  h1 { font-size: 2rem; color: var(--doc-gold); margin-bottom: 8px; border-bottom: 1px solid var(--doc-gold-a3); padding-bottom: 12px; }
+  h2 { font-size: 1.05rem; color: var(--doc-gold); margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  p { font-size: .92rem; color: var(--doc-text); margin-bottom: 10px; }
+  a { color: var(--doc-gold); }
   .box {
     margin: 10px 0 16px;
     padding: 14px 18px;
     background: rgba(255,255,255,.04);
-    border: 1px solid rgba(212,168,67,.2);
+    border: 1px solid var(--doc-gold-a2);
     border-radius: 10px;
     font-size: .88rem;
-    color: #c0b8a8;
+    color: var(--doc-dim);
   }
-  .box strong { color: #f0c060; }
+  .box strong { color: var(--doc-goldt); }
   .updated { font-size: .78rem; color: #888; margin-top: 6px; }
 </style>
 </head>
@@ -3286,7 +3286,7 @@ const DOCS = {
 <div class="wrap">
 
   <h1>Drittanbieter-Hinweise</h1>
-  <p class="updated">Proprietäre Softwarelizenz · Copyright © 2026 Sven Riedel · <a href="https://github.com/rdl-gaming/" target="_blank" rel="noopener">github.com/rdl-gaming/</a></p>
+  <p class="updated">Quiz App · Copyright © 2026 Sven Riedel</p>
 
   <p style="margin-top:20px">
     Dieses Produkt enthält oder verwendet folgende Komponenten Dritter:
@@ -3324,10 +3324,36 @@ const DOCS = {
 </body>
 </html>`
 };
+function hexRgb(hex){
+  const h=hex.replace('#','');
+  const r=parseInt(h.substring(0,2),16);
+  const g=parseInt(h.substring(2,4),16);
+  const b=parseInt(h.substring(4,6),16);
+  return r+','+g+','+b;
+}
 function showDoc(key){
   const ov=document.getElementById('doc-overlay');
   document.getElementById('doc-ttl').textContent=DOC_TITLES[key]||'Dokument';
-  document.getElementById('doc-frame').srcdoc=DOCS[key]||'';
+  const th=THEMES[S.theme];
+  const gr=hexRgb(th.gold);
+  const cr=hexRgb(th.cream);
+  const themeVars=`<style>:root{
+    --doc-bg:${th.bg};
+    --doc-gold:${th.gold};
+    --doc-goldt:${th.goldt};
+    --doc-cream:${th.cream};
+    --doc-text:rgba(${cr},.85);
+    --doc-dim:rgba(${cr},.68);
+    --doc-gold-a2:rgba(${gr},.2);
+    --doc-gold-a25:rgba(${gr},.25);
+    --doc-gold-a3:rgba(${gr},.3);
+    --doc-gold-a5:rgba(${gr},.5);
+    --doc-gold-a07:rgba(${gr},.07);
+    --doc-red:${th.red};
+    --doc-red-light:${th.goldt};
+  }</style>`;
+  const rawHtml=DOCS[key]||'';
+  document.getElementById('doc-frame').srcdoc=rawHtml.replace('</head>',themeVars+'</head>');
   ov.style.display='flex';
 }
 function closeDoc(){
