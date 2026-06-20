@@ -7,7 +7,7 @@ Proprietäre Software – Nutzung, Vervielfältigung und Weitergabe nur mit ausd
 
 ## Beschreibung
 
-Eine vollständig in sich geschlossene, browserbasierte Quiz-App für Gruppen und Events. Die gesamte Anwendung besteht aus **einer einzigen HTML-Datei** (`index.html`) – kein Server, keine Installation, keine Abhängigkeiten nötig. Einfach die Datei im Browser öffnen und losspielen.
+Eine vollständig in sich geschlossene, browserbasierte Quiz-App für Gruppen und Events.
 
 ---
 
@@ -40,8 +40,10 @@ Jede Frage kann einen der folgenden Inhaltstypen haben:
 - **Text** – klassische Frage als reiner Text, optional mit zusätzlichem Antwort-Medium (Bild/Video/Audio/YouTube), das erst beim Aufdecken der Antwort angezeigt wird
 - **Bild** – lokale Bilddatei hochladen oder URL eingeben (optional **verpixelt** darstellbar; beim Aufdecken der Antwort wird automatisch das Originalbild eingeblendet); Bilder lassen sich per Klick in einer Vollbild-Lightbox vergrößern
 - **Audio** – lokale Audiodatei mit eigenem Play/Pause-Button; alternativ eine YouTube-URL für reine Musikwiedergabe ohne sichtbares Video
-- **Video** – lokale Videodatei mit eigener Lautstärkeregelung
+- **Video** – lokale Videodatei mit nativen Steuerelementen, Lautstärke richtet sich nach der globalen Video-Lautstärke
 - **YouTube** – YouTube-Link direkt im Video- oder Audio-Feld eingeben; die YouTube IFrame API wird dabei erst bei Bedarf (Klick auf Play) nachgeladen. Native YouTube-Steuerelemente sind ausgeblendet, stattdessen gibt es einen eigenen Vollbild-Button; optional lassen sich Startzeit und Wiedergabedauer pro Frage begrenzen
+
+Bei Bild-, Video-, Audio- und YouTube-Fragen lässt sich zusätzlich ein optionaler **Fragetext** hinterlegen, der oberhalb des Mediums als kurze Zusatzinfo eingeblendet wird (z. B. ein Hinweis oder eine Teilfrage).
 
 ### Spielablauf
 - Bis zu **10 Teams** spielen gleichzeitig, beliebig viele Kategorien sind möglich
@@ -49,8 +51,8 @@ Jede Frage kann einen der folgenden Inhaltstypen haben:
 - Das **Spielbrett** zeigt Kategorien als Spalten und Punktwerte als Zeilen
 - Geklickte Felder öffnen die Frage in einem Modal-Fenster
 - Nach Anzeige der Antwort vergibt der Spielleiter Punkte – die Vergabelogik unterscheidet sich je nach Team- oder VS-Modus (siehe oben)
-- Bereits beantwortete Felder werden ausgeblendet
-- Die **Punkteanzeige** am unteren Rand hebt das führende Team hervor
+- Bereits beantwortete Felder werden ausgeblendet (stark transparent dargestellt und nicht mehr anklickbar)
+- Die **Punkteanzeige** am unteren Rand hebt ein Team kurz golden hervor, sobald es Punkte erhält oder verliert
 - Sobald alle Felder gespielt wurden, erscheint automatisch eine **Sieger-Anzeige** mit Feuerwerk-Animation, Siegerkrone, Podium für die Top 3 (🥇🥈🥉) und Unentschieden-Erkennung
 
 ### Punkte-Multiplikatoren
@@ -79,10 +81,10 @@ Das Theme wird dabei automatisch aus dem geladenen Katalog übernommen und kann 
 - **🎮 Spiel neu starten** – setzt das gesamte Spiel zurück und führt zur Katalog-/Teamauswahl
 - **📥 Import** / **📤 Export** (siehe unten)
 
-Darunter gliedert sich das Panel in drei Reiter:
+Darunter gliedert sich das Panel in vier Reiter:
 
 **📝 Fragen**
-Legt zunächst über die **Fragenstruktur** fest, wie viele Punktestufen es gibt und welche Punkte- und Standard-Timerwerte pro Stufe gelten (Stufen lassen sich hinzufügen oder löschen). Darunter werden alle Fragen und Antworten bearbeitet: Fragetyp wählen, Medien hochladen oder per URL einbinden, Verpixelung umschalten, Start-/Endzeit für Video-/Audio-/YouTube-Inhalte setzen, optionales Antwort-Medium hinterlegen und Timer pro Frage individuell setzen.
+Legt zunächst über die **Fragenstruktur** fest, wie viele Punktestufen es gibt und welche Punkte- und Standard-Timerwerte pro Stufe gelten (Stufen lassen sich hinzufügen oder löschen). Darunter werden alle Fragen und Antworten bearbeitet: Fragetyp wählen, Medien hochladen oder per URL einbinden, Verpixelung umschalten, optionalen Fragetext hinterlegen, Start-/Endzeit für Video-/Audio-/YouTube-Inhalte setzen, optionales Antwort-Medium hinterlegen und Timer pro Frage individuell setzen.
 
 **📁 Kategorien**
 Kategorien anlegen, umbenennen, mit Emoji versehen, farblich anpassen oder löschen.
@@ -92,10 +94,12 @@ Kategorien anlegen, umbenennen, mit Emoji versehen, farblich anpassen oder lösc
 - Quiz-Titel anpassen
 - Punkte-Multiplikatoren verwalten
 - Lautstärke für Timer-Ton, Video und Musik separat einstellen
-- **📑 Rechtliches** – Impressum, Datenschutzerklärung, Lizenz und Drittanbieter-Hinweise direkt als schließbares Popup aufrufen (siehe Abschnitt „Rechtliche Hinweise“)
+
+**📑 Rechtliches**
+Impressum, Datenschutzerklärung, Lizenz und Drittanbieter-Hinweise direkt als schließbares Popup aufrufen (siehe Abschnitt „Rechtliche Hinweise“)
 
 ### Import / Export
-- **Export:** Speichert den gesamten Spielstand als `.json`-Datei – Fragen und Antworten inkl. eingebetteter Medien, Kategorien, Punkte-/Timer-Stufen, Theme, Quiz-Titel, Multiplikatoren und Lautstärke-Einstellungen
+- **Export:** Speichert den gesamten Spielstand als `.json`-Datei – Fragen und Antworten inkl. eingebetteter Medien, Kategorien, Punkte-/Timer-Stufen, Theme, Quiz-Titel, Multiplikatoren und Lautstärke-Einstellungen. In Chrome/Edge öffnet sich dafür ein nativer „Speichern unter"-Dialog mit einem aus dem Quiz-Titel abgeleiteten Dateinamen; in Firefox/Safari erfolgt ein klassischer Download.
 - **Import:** Lädt eine zuvor exportierte `.json`-Datei und stellt den vollständigen Stand wieder her
 
 ---
@@ -115,7 +119,7 @@ Der aktuelle Spielstand, Fragen und Einstellungen werden automatisch im **localS
 | Mountains of Christmas, Playfair Display, Nunito (Google Fonts) | SIL Open Font License 1.1 (OFL) |
 | YouTube IFrame API | Proprietärer Dienst von Google LLC – [Nutzungsbedingungen](https://www.youtube.com/t/terms) |
 
-Weitere Details siehe [NOTICE.txt](NOTICE.txt). Die gleichen Informationen sind auch direkt in der App unter **⚙ Einstellungen → 🎨 Optionen → 📑 Rechtliches → ℹ️ Drittanbieter-Hinweise** einsehbar.
+Weitere Details unter **⚙ Einstellungen → 📑 Rechtliches → ℹ️ Drittanbieter-Hinweise** einsehbar.
 
 ---
 
@@ -128,18 +132,16 @@ Weitere Details siehe [NOTICE.txt](NOTICE.txt). Die gleichen Informationen sind 
 ## Lizenz
 
 Copyright (c) 2026 Sven Riedel. Alle Rechte vorbehalten.
-Proprietäre Software – siehe [LICENSE.txt](LICENSE.txt) für vollständige Bedingungen. Die Lizenz ist auch direkt in der App unter **⚙ Einstellungen → 🎨 Optionen → 📑 Rechtliches → 📜 Lizenz** abrufbar.
+Proprietäre Software – siehe **⚙ Einstellungen → 📑 Rechtliches → 📜 Lizenz** für vollständige Bedingungen.
 
 ---
 
 ## Rechtliche Hinweise
 
-Impressum und Datenschutzerklärung sind direkt in `index.html` integriert und ohne separate Dateien erreichbar:
-
-**⚙ Einstellungen → 🎨 Optionen → 📑 Rechtliches**, dort:
+**⚙ Einstellungen → 📑 Rechtliches**, dort:
 - **📄 Impressum**
 - **🔒 Datenschutzerklärung**
 - **📜 Lizenz**
 - **ℹ️ Drittanbieter-Hinweise**
 
-Ein Klick auf einen der Buttons öffnet das jeweilige Dokument als schließbares Popup innerhalb der App. Zur Referenz liegen die Inhalte zusätzlich als eigenständige Dateien im Repository: [Impressum.html](Impressum.html), [Datenschutz.html](Datenschutz.html), [LICENSE.txt](LICENSE.txt), [NOTICE.txt](NOTICE.txt).
+Ein Klick auf einen der Buttons öffnet die jeweilige Information als schließbares Popup innerhalb der App.
