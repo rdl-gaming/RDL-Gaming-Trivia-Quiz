@@ -144,6 +144,16 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .confirm-msg{font-size:.85rem;color:var(--silver);margin-bottom:22px;line-height:1.5}
 .confirm-btns{display:flex;gap:12px;justify-content:center}
 
+/* ── LEGAL DOC MODAL ── */
+.doc-box{background:linear-gradient(155deg,#1a1a1a 0%,#000000 100%);border:2px solid var(--gold);border-radius:18px;width:100%;max-width:780px;height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.75),0 0 50px rgba(212,168,67,.18)}
+.doc-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(212,168,67,.25);flex-shrink:0}
+.doc-ttl{font-family:'Mountains of Christmas',cursive;font-size:1.4rem;color:var(--gold)}
+.doc-body{flex:1;min-height:0}
+.doc-body iframe{width:100%;height:100%;border:none;display:block;background:#061209}
+.legal-links{display:flex;gap:10px;flex-wrap:wrap}
+.legal-link-btn{background:transparent;border:1px solid rgba(212,168,67,.4);color:var(--gold);padding:9px 18px;border-radius:50px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Nunito',sans-serif;transition:all .2s}
+.legal-link-btn:hover{background:rgba(212,168,67,.12);transform:translateY(-2px)}
+
 /* ── SETTINGS ── */
 .settings-wrap{width:100%;max-width:1500px;margin:0 auto;padding:20px}
 .settings-hdr{display:flex;align-items:center;gap:10px;padding:0 0 16px;border-bottom:1px solid rgba(212,168,67,.3);margin-bottom:0;flex-wrap:wrap}
@@ -466,6 +476,19 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
   </div>
 </div>
 
+<!-- ════════════════════════════════ LEGAL DOC MODAL ════════════════════════════════ -->
+<div class="overlay" id="doc-overlay" style="display:none;z-index:700" onclick="if(event.target===this)closeDoc()">
+  <div class="doc-box">
+    <div class="doc-hdr">
+      <div class="doc-ttl" id="doc-ttl">Dokument</div>
+      <button class="btn btn-red" style="background:rgba(139,0,0,.7)" onclick="closeDoc()">✕ Schließen</button>
+    </div>
+    <div class="doc-body">
+      <iframe id="doc-frame" title="Rechtliches Dokument"></iframe>
+    </div>
+  </div>
+</div>
+
 
 <div class="screen" id="settings-screen" style="display:none">
   <div class="settings-wrap">
@@ -576,6 +599,15 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
             <label>🎵 Musik-Lautstärke <span id="vol-music-val">50%</span></label>
             <input type="range" class="vol-slider" id="vol-music" min="0" max="100" value="50" oninput="document.getElementById('vol-music-val').textContent=this.value+'%';updateVolFill(this)">
           </div>
+        </div>
+      </div>
+      <div class="global-box">
+        <h3>📑 Rechtliches</h3>
+        <div class="legal-links">
+          <button class="legal-link-btn" onclick="showDoc('impressum')">📄 Impressum</button>
+          <button class="legal-link-btn" onclick="showDoc('datenschutz')">🔒 Datenschutzerklärung</button>
+          <button class="legal-link-btn" onclick="showDoc('license')">📜 Lizenz</button>
+          <button class="legal-link-btn" onclick="showDoc('notice')">ℹ️ Drittanbieter-Hinweise</button>
         </div>
       </div>
     </div>
@@ -2792,6 +2824,513 @@ function closeWinner(){
   document.getElementById('winner-overlay').style.display='none';
   stopFireworks();
   showSnow();
+}
+
+// ════════════════════════════════════════════════════════
+//  LEGAL DOCUMENTS (Impressum / Datenschutz / Lizenz / Hinweise)
+// ════════════════════════════════════════════════════════
+const DOC_TITLES = {
+  impressum:'📄 Impressum',
+  datenschutz:'🔒 Datenschutzerklärung',
+  license:'📜 Lizenz',
+  notice:'ℹ️ Drittanbieter-Hinweise'
+};
+const DOCS = {
+  impressum:`<!DOCTYPE html>
+<!--
+  Impressum – Quiz App
+  Copyright (c) 2026 Sven Riedel. Alle Rechte vorbehalten.
+-->
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum – Quiz App</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #061209;
+    color: #f5edd8;
+    min-height: 100vh;
+    padding: 40px 20px;
+    line-height: 1.7;
+  }
+  .wrap {
+    max-width: 740px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2rem;
+    color: #d4a843;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(212,168,67,.3);
+    padding-bottom: 12px;
+  }
+  h2 {
+    font-size: 1.05rem;
+    color: #d4a843;
+    margin: 28px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  p, address { font-size: .92rem; color: #d0c8b8; font-style: normal; }
+  a { color: #d4a843; }
+  .placeholder {
+    background: rgba(192,57,43,.25);
+    border: 1px dashed #c0392b;
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: #ff8c5a;
+    font-size: .85rem;
+  }
+  .note {
+    margin-top: 32px;
+    padding: 14px 18px;
+    background: rgba(212,168,67,.07);
+    border-left: 3px solid rgba(212,168,67,.5);
+    border-radius: 4px;
+    font-size: .8rem;
+    color: #b0a898;
+  }
+  .back { display: inline-block; margin-top: 36px; color: #d4a843; font-size: .85rem; text-decoration: none; }
+  .back:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Impressum</h1>
+
+  <h2>Angaben gemäß § 5 TMG</h2>
+  <address>
+    Sven Riedel<br>
+    Im Kaisemer 23<br>
+    70191 Stuttgart<br>
+    Deutschland<br>
+  </address>
+
+  <h2>Kontakt</h2>
+  <p>
+    E-Mail: rdl.gaming.ltd@gmail.com
+  </p>
+
+  <h2>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</h2>
+  <address>
+    Sven Riedel<br>
+    Im Kaisemer 23<br>
+    70191 Stuttgart<br>
+    Deutschland<br>
+  </address>
+
+  <h2>Urheberrecht</h2>
+  <p>
+    Die auf dieser Website bereitgestellte Software und alle zugehörigen Inhalte sind
+    urheberrechtlich geschützt. Copyright &copy; 2026 Sven Riedel. Alle Rechte vorbehalten.
+    Nutzung, Vervielfältigung oder Weitergabe nur mit ausdrücklicher schriftlicher Genehmigung.
+  </p>
+
+  <h2>Haftungsausschluss</h2>
+  <p>
+    Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte
+    externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber
+    verantwortlich.
+  </p>
+
+</div>
+</body>
+</html>
+`,
+  datenschutz:`<!DOCTYPE html>
+<!--
+  Datenschutzerklärung – Quiz App
+  Copyright (c) 2026 Sven Riedel. Alle Rechte vorbehalten.
+-->
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutzerklärung – Quiz App</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #061209;
+    color: #f5edd8;
+    min-height: 100vh;
+    padding: 40px 20px;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 740px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: #d4a843; margin-bottom: 8px; border-bottom: 1px solid rgba(212,168,67,.3); padding-bottom: 12px; }
+  h2 { font-size: 1.05rem; color: #d4a843; margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  h3 { font-size: .95rem; color: #f0c060; margin: 18px 0 6px; }
+  p { font-size: .92rem; color: #d0c8b8; margin-bottom: 10px; }
+  ul { font-size: .92rem; color: #d0c8b8; margin: 8px 0 10px 20px; }
+  ul li { margin-bottom: 4px; }
+  a { color: #d4a843; }
+  .placeholder {
+    background: rgba(192,57,43,.25);
+    border: 1px dashed #c0392b;
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: #ff8c5a;
+    font-size: .85rem;
+  }
+  .box {
+    margin: 10px 0 16px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(212,168,67,.2);
+    border-radius: 10px;
+    font-size: .88rem;
+    color: #c0b8a8;
+  }
+  .box strong { color: #f0c060; }
+  .note {
+    margin-top: 36px;
+    padding: 14px 18px;
+    background: rgba(212,168,67,.07);
+    border-left: 3px solid rgba(212,168,67,.5);
+    border-radius: 4px;
+    font-size: .8rem;
+    color: #b0a898;
+  }
+  .back { display: inline-block; margin-top: 36px; color: #d4a843; font-size: .85rem; text-decoration: none; }
+  .back:hover { text-decoration: underline; }
+  .updated { font-size: .78rem; color: #888; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Datenschutzerklärung</h1>
+  <p class="updated">Stand: April 2026</p>
+
+  <!-- ── 1. Verantwortlicher ── -->
+  <h2>1. Verantwortlicher</h2>
+  <p>
+    Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne der
+    Datenschutz-Grundverordnung (DSGVO) ist:
+  </p>
+  <p>
+    Sven Riedel<br>
+    Im Kaisemer 23<br>
+    70191 Stuttgart<br>
+    Deutschland<br>
+    E-Mail: rdl.gaming.ltd@gmail.com
+  </p>
+
+  <!-- ── 2. Hosting ── -->
+  <h2>2. Hosting</h2>
+  <p>
+    Diese Website wird bei einem externen Hosting-Anbieter betrieben.
+    Beim Aufruf der Website werden vom Hosting-Anbieter automatisch sogenannte
+    Server-Logfiles erfasst, die Ihr Browser übermittelt. Dies sind:
+  </p>
+  <ul>
+    <li>IP-Adresse</li>
+    <li>Datum und Uhrzeit des Zugriffs</li>
+    <li>Browsertyp und -version</li>
+    <li>Verwendetes Betriebssystem</li>
+    <li>Referrer-URL</li>
+    <li>Aufgerufene Seite / Datei</li>
+  </ul>
+  <p>
+    Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am
+    sicheren und störungsfreien Betrieb der Website). Die Daten werden nicht mit
+    anderen Datenquellen zusammengeführt und nach spätestens 30 Tagen gelöscht.
+  </p>
+  <div class="box">
+    <strong>Hosting-Anbieter:</strong> GitHub, Inc.<br>
+    https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement
+  </div>
+
+  <!-- ── 3. localStorage ── -->
+  <h2>3. Lokale Datenspeicherung (localStorage)</h2>
+  <p>
+    Die Quiz App speichert Spielstände, Kategorien, Fragen und Einstellungen
+    ausschließlich im <strong>localStorage Ihres Browsers</strong>. Diese Daten
+    verbleiben lokal auf Ihrem Gerät und werden zu keinem Zeitpunkt an unsere
+    Server oder Dritte übertragen.
+  </p>
+  <p>
+    Sie können die gespeicherten Daten jederzeit über die Browser-Einstellungen
+    löschen (Websitedaten / Cache leeren).
+  </p>
+  <p>
+    Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am
+    funktionsfähigen Betrieb der Anwendung).
+  </p>
+
+  <!-- ── 4. Google Fonts ── -->
+  <h2>4. Google Fonts</h2>
+  <p>
+    Diese Website verwendet Schriftarten des Dienstes Google Fonts der Google LLC,
+    1600 Amphitheatre Parkway, Mountain View, CA 94043, USA
+    (im EWR und der EU: Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland).
+  </p>
+  <p>
+    Beim Laden der Seite stellt Ihr Browser eine Verbindung zu den Servern von
+    Google her, wobei Ihre IP-Adresse übertragen wird. Google kann so nachvollziehen,
+    dass Ihre IP-Adresse diese Website aufgerufen hat.
+  </p>
+  <div class="box">
+    <strong>Anbieter:</strong> Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland<br>
+    <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der einheitlichen Darstellung der Website)<br>
+    <strong>Datenschutzerklärung Google:</strong> <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a><br>
+    <strong>Datenübertragung in die USA:</strong> Auf Basis der EU-Standardvertragsklauseln (SCC).
+  </div>
+  <p>
+    <em>Hinweis: Es ist geplant, Google Fonts künftig lokal zu hosten, um diese
+    Datenübertragung zu vermeiden. Diese Datenschutzerklärung wird entsprechend
+    aktualisiert.</em>
+  </p>
+
+  <!-- ── 5. YouTube ── -->
+  <h2>5. YouTube IFrame API</h2>
+  <p>
+    Die Quiz App unterstützt die optionale Einbindung von YouTube-Videos als
+    Frageninhalt. Sobald eine Frage mit einem YouTube-Link hinterlegt ist und
+    ein Nutzer aktiv auf den Play-Button klickt, wird die
+    <strong>YouTube IFrame API</strong> von Google nachgeladen.
+  </p>
+  <p>
+    Dabei wird eine Verbindung zu den Servern von YouTube (Google LLC) hergestellt.
+    YouTube kann dabei folgende Daten verarbeiten:
+  </p>
+  <ul>
+    <li>IP-Adresse des Nutzers</li>
+    <li>Informationen über das abgespielte Video</li>
+    <li>Geräteinformationen und Browsertyp</li>
+    <li>Ggf. Nutzungsdaten wenn der Nutzer bei YouTube eingeloggt ist</li>
+  </ul>
+  <div class="box">
+    <strong>Anbieter:</strong> Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland<br>
+    <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bereitstellung der Video-Funktion)<br>
+    <strong>Wichtig:</strong> Die API wird <em>nicht</em> beim Laden der Seite automatisch aufgerufen,
+    sondern erst durch aktive Nutzerinteraktion (Klick auf Play).<br>
+    <strong>Nutzungsbedingungen YouTube:</strong> <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">youtube.com/t/terms</a><br>
+    <strong>Datenschutzerklärung Google:</strong> <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>
+  </div>
+
+  <!-- ── 6. Betroffenenrechte ── -->
+  <h2>6. Ihre Rechte</h2>
+  <p>Sie haben gegenüber uns folgende Rechte hinsichtlich Ihrer personenbezogenen Daten:</p>
+  <ul>
+    <li>Recht auf Auskunft (Art. 15 DSGVO)</li>
+    <li>Recht auf Berichtigung (Art. 16 DSGVO)</li>
+    <li>Recht auf Löschung (Art. 17 DSGVO)</li>
+    <li>Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+    <li>Recht auf Datenübertragbarkeit (Art. 20 DSGVO)</li>
+    <li>Recht auf Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</li>
+  </ul>
+  <p>
+    Zur Ausübung Ihrer Rechte wenden Sie sich bitte an:
+    rdl.gaming.ltd@gmail.com
+  </p>
+  <p>
+    Sie haben zudem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.
+    Die zuständige Behörde in Baden-Württemberg ist der
+    <a href="https://www.baden-wuerttemberg.datenschutz.de" target="_blank" rel="noopener">
+    Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg</a>.
+  </p>
+
+  <!-- ── 7. Aktualität ── -->
+  <h2>7. Aktualität dieser Erklärung</h2>
+  <p>
+    Diese Datenschutzerklärung ist aktuell gültig und hat den Stand April 2026.
+    Durch Weiterentwicklung der Website oder aufgrund geänderter gesetzlicher bzw.
+    behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung
+    anzupassen. Die jeweils aktuelle Version ist stets unter dieser URL abrufbar.
+  </p>
+
+</div>
+</body>
+</html>
+`,
+  license:`<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lizenz – Quiz App</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #061209;
+    color: #f5edd8;
+    min-height: 100vh;
+    padding: 40px 20px;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 740px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: #d4a843; margin-bottom: 8px; border-bottom: 1px solid rgba(212,168,67,.3); padding-bottom: 12px; }
+  h2 { font-size: 1.05rem; color: #d4a843; margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  p { font-size: .92rem; color: #d0c8b8; margin-bottom: 10px; }
+  ul { font-size: .92rem; color: #d0c8b8; margin: 8px 0 10px 20px; }
+  ul li { margin-bottom: 4px; }
+  a { color: #d4a843; }
+  .box {
+    margin: 10px 0 16px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(212,168,67,.2);
+    border-radius: 10px;
+    font-size: .88rem;
+    color: #c0b8a8;
+  }
+  .box strong { color: #f0c060; }
+  .updated { font-size: .78rem; color: #888; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Lizenz</h1>
+  <p class="updated">Proprietäre Softwarelizenz · Copyright © 2026 Sven Riedel</p>
+
+  <h2>1. Urheberrecht</h2>
+  <p>
+    Diese Software und alle zugehörigen Dateien ("die Software") sind urheberrechtlich
+    geschütztes Eigentum von Sven Riedel. Alle Rechte vorbehalten. Es wird keine Lizenz
+    zur freien Nutzung, Vervielfältigung, Veränderung oder Weitergabe gewährt, soweit
+    nachfolgend nicht ausdrücklich etwas anderes bestimmt ist.
+  </p>
+
+  <h2>2. Erlaubte Nutzung</h2>
+  <ul>
+    <li>Die private, nicht-kommerzielle Nutzung der Software für eigene Zwecke.</li>
+  </ul>
+
+  <h2>3. Nicht erlaubt (ohne ausdrückliche schriftliche Genehmigung)</h2>
+  <ul>
+    <li>Weitergabe, Verkauf oder Unterlizenzierung der Software an Dritte.</li>
+    <li>Veröffentlichung des Quellcodes oder von Teilen davon.</li>
+    <li>Kommerzielle Nutzung jeglicher Art.</li>
+    <li>Erstellung abgeleiteter Werke.</li>
+    <li>Reverse Engineering, soweit gesetzlich nicht erlaubt.</li>
+  </ul>
+
+  <h2>4. Drittanbieter-Komponenten</h2>
+  <p>
+    Die Software verwendet folgende Komponenten Dritter, die unter eigenen Lizenzen
+    stehen und von dieser Lizenz unberührt bleiben:
+  </p>
+  <div class="box">
+    <strong>Schriftarten</strong> (SIL Open Font License 1.1)<br>
+    – Mountains of Christmas (Copyright 2011 Tart Workshop)<br>
+    – Playfair Display (Copyright 2011 Claus Eggers Sørensen)<br>
+    – Nunito (Copyright 2014 Vernon Adams)<br>
+    Vollständiger Lizenztext: <a href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">scripts.sil.org/OFL</a>
+  </div>
+  <div class="box">
+    <strong>YouTube IFrame API</strong><br>
+    Proprietärer Dienst von Google LLC.<br>
+    Nutzungsbedingungen: <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">youtube.com/t/terms</a><br>
+    Diese API ist kein Bestandteil dieser Software und wird nur bei Bedarf (YouTube-URLs) zur Laufzeit geladen.
+  </div>
+
+  <h2>5. Haftungsausschluss</h2>
+  <p>
+    Die Software wird "wie besehen" bereitgestellt, ohne jegliche Gewährleistung, weder
+    ausdrücklich noch stillschweigend. In keinem Fall haftet der Urheber für Schäden,
+    die durch die Nutzung dieser Software entstehen.
+  </p>
+
+  <h2>6. Kontakt</h2>
+  <p>
+    Für Lizenzanfragen: <a href="mailto:rdl.gaming.ltd@gmail.com">rdl.gaming.ltd@gmail.com</a>
+  </p>
+
+</div>
+</body>
+</html>`,
+  notice:`<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drittanbieter-Hinweise – Quiz App</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #061209;
+    color: #f5edd8;
+    min-height: 100vh;
+    padding: 40px 20px;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 740px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: #d4a843; margin-bottom: 8px; border-bottom: 1px solid rgba(212,168,67,.3); padding-bottom: 12px; }
+  h2 { font-size: 1.05rem; color: #d4a843; margin: 32px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  p { font-size: .92rem; color: #d0c8b8; margin-bottom: 10px; }
+  a { color: #d4a843; }
+  .box {
+    margin: 10px 0 16px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(212,168,67,.2);
+    border-radius: 10px;
+    font-size: .88rem;
+    color: #c0b8a8;
+  }
+  .box strong { color: #f0c060; }
+  .updated { font-size: .78rem; color: #888; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Drittanbieter-Hinweise</h1>
+  <p class="updated">Quiz App · Copyright © 2026 Sven Riedel</p>
+
+  <p style="margin-top:20px">
+    Dieses Produkt enthält oder verwendet folgende Komponenten Dritter:
+  </p>
+
+  <h2>Schriftarten (SIL Open Font License 1.1)</h2>
+  <div class="box">
+    <strong>1. Mountains of Christmas</strong><br>
+    Urheber: Tart Workshop<br>
+    Quelle: <a href="https://fonts.google.com/specimen/Mountains+of+Christmas" target="_blank" rel="noopener">fonts.google.com/specimen/Mountains+of+Christmas</a>
+  </div>
+  <div class="box">
+    <strong>2. Playfair Display</strong><br>
+    Urheber: Claus Eggers Sørensen<br>
+    Quelle: <a href="https://fonts.google.com/specimen/Playfair+Display" target="_blank" rel="noopener">fonts.google.com/specimen/Playfair+Display</a>
+  </div>
+  <div class="box">
+    <strong>3. Nunito</strong><br>
+    Urheber: Vernon Adams, Cyreal<br>
+    Quelle: <a href="https://fonts.google.com/specimen/Nunito" target="_blank" rel="noopener">fonts.google.com/specimen/Nunito</a>
+  </div>
+  <p>
+    Vollständiger Lizenztext: <a href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">scripts.sil.org/OFL</a>
+  </p>
+
+  <h2>YouTube IFrame API</h2>
+  <div class="box">
+    <strong>Anbieter:</strong> Google LLC<br>
+    <strong>Art:</strong> Proprietärer Drittanbieter-Dienst (kein Bestandteil dieser Software – wird nur zur Laufzeit bei Bedarf geladen)<br>
+    Bedingungen: <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">youtube.com/t/terms</a><br>
+    Datenschutz: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>
+  </div>
+
+</div>
+</body>
+</html>`
+};
+function showDoc(key){
+  const ov=document.getElementById('doc-overlay');
+  document.getElementById('doc-ttl').textContent=DOC_TITLES[key]||'Dokument';
+  document.getElementById('doc-frame').srcdoc=DOCS[key]||'';
+  ov.style.display='flex';
+}
+function closeDoc(){
+  document.getElementById('doc-overlay').style.display='none';
 }
 
 function startFireworks(){
