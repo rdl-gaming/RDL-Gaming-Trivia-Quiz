@@ -24,7 +24,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#000000;--bg-mid:#111111;--gd:#1a1a1a;--gm:#222222;
+  --bg:#000000;--gm:#222222;
   --gold:#d4a843;--goldt:#f0c060;--red:#c0392b;--redd:#8b0000;
   --cream:#f5edd8;--silver:#b0b0b0;
   --card-border:rgba(212,168,67,.6);
@@ -58,14 +58,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .setup-btn:disabled{opacity:.4;cursor:default;pointer-events:none}
 .team-name-inputs{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;max-height:280px;overflow-y:auto;padding-right:4px}
 
-/* ── THEME PICKER (setup) ── */
-.theme-pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:18px}
-.theme-pick-card{background:rgba(255,255,255,.05);border:2px solid rgba(212,168,67,.22);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
-.theme-pick-card::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.08) 0%,transparent 55%);pointer-events:none}
-.theme-pick-card:hover{border-color:rgba(212,168,67,.6);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.theme-pick-card.tsel{border-color:var(--gold);background:rgba(212,168,67,.18);box-shadow:0 0 22px rgba(212,168,67,.35);transform:translateY(-2px)}
-.theme-pick-icon{font-size:2rem;margin-bottom:5px;display:block}
-.theme-pick-name{font-size:.75rem;font-weight:700;color:var(--cream);letter-spacing:.3px}
 
 /* ── QUIZ HEADER ── */
 .qhdr{text-align:center;padding:8px 16px 4px;flex-shrink:0;position:relative;z-index:2}
@@ -101,12 +93,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .mpts{font-family:'Mountains of Christmas',cursive;font-size:1.8rem;color:var(--goldt)}
 .mbody{flex:1;min-height:0;overflow:hidden;padding:16px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .qtxt{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);line-height:1.65}
-.qimg,.qvid{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:12px;display:block;margin:auto;object-fit:contain;flex-shrink:1;min-height:0}
-.qytembed{width:100%;max-width:560px;border-radius:12px;border:none;aspect-ratio:16/9;display:block;margin:auto;flex-shrink:1}
+.qimg{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:12px;display:block;margin:auto;object-fit:contain;flex-shrink:1;min-height:0}
 .qaud-wrap{text-align:center;width:100%}
 .qaud{width:100%;max-width:480px;margin:0 auto;display:block}
-.pixel-host{overflow:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;max-width:100%;max-height:100%;min-height:0;flex:1;width:100%}
-.pixel-host img{image-rendering:pixelated;max-width:100%;max-height:100%;object-fit:contain}
 
 /* answer */
 .ans-sec{padding:14px 22px;border-top:1px solid rgba(212,168,67,.25);background:rgba(0,0,0,.2);flex-shrink:0}
@@ -185,7 +174,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .ata{height:52px;resize:vertical}
 .asel option{background:#0f2012;color:var(--cream)}
 .ar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ar3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .achk-lbl{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--silver);cursor:pointer}
 .achk-lbl input{accent-color:var(--gold)}
 
@@ -205,7 +193,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .add-cat-inner .cat-field{flex:1;min-width:120px}
 .cat-add-btn{background:linear-gradient(135deg,var(--gold),#a0720a);color:var(--bg);border:none;border-radius:20px;padding:8px 18px;font-size:.82rem;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;flex-shrink:0;align-self:flex-end;margin-bottom:0}
 .cat-add-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(212,168,67,.35)}
-.cat-warning{font-size:.72rem;color:#ff8c5a;margin-top:6px;padding:8px 12px;background:rgba(255,100,0,.1);border-radius:8px;border-left:3px solid #ff6422}
 
 /* question structure editor */
 .qs-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(212,168,67,.18);border-radius:10px;padding:10px 14px;flex-wrap:wrap}
@@ -216,8 +203,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .qs-del:hover{background:rgba(192,57,43,.4)}
 .qs-add{background:linear-gradient(135deg,var(--gold),#a0720a);color:var(--bg);border:none;border-radius:18px;padding:7px 16px;font-size:.8rem;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s}
 .qs-add:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(212,168,67,.35)}
-.qs-apply{background:linear-gradient(135deg,#2e7d32,#1a4f1e);color:#90ee90;border:none;border-radius:18px;padding:7px 16px;font-size:.8rem;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;margin-left:auto}
-.qs-apply:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.3)}
 .qs-warn{font-size:.72rem;color:#ff8c5a;margin-top:6px;padding:8px 12px;background:rgba(255,100,0,.1);border-radius:8px;border-left:3px solid #ff6422}
 .theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
 .theme-card{background:rgba(255,255,255,.04);border:2px solid rgba(212,168,67,.2);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
@@ -280,13 +265,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif
 .winner-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:rgba(212,168,67,.5);border-radius:3px}
-/* custom audio player */
-.audio-play-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:10px}
-.audio-play-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a0720a);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:2rem;transition:all .2s;box-shadow:0 8px 28px rgba(0,0,0,.4)}
-.audio-play-btn:hover{transform:scale(1.08);box-shadow:0 12px 36px rgba(0,0,0,.5)}
-.audio-play-btn.playing{background:linear-gradient(135deg,#4caf50,#2e7d32)}
-.audio-play-wrap .pausing{background:linear-gradient(135deg,#1976d2,#0d47a1)}
-.audio-play-lbl{font-size:.78rem;color:var(--silver);letter-spacing:1px;text-transform:uppercase}
 
 /* ── LIGHTBOX ── */
 #lightbox{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;cursor:zoom-out;backdrop-filter:blur(4px);animation:lbin .18s ease}
@@ -359,11 +337,6 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
     <span class="setup-tree" id="setup-icon"></span>
     <div class="setup-title" id="setup-title-txt">Trivia Quiz</div>
     <div class="setup-sub" id="setup-sub-txt">Lade deinen Fragenkatalog</div>
-    <div id="step-theme" style="display:none">
-      <label class="setup-label">Theme auswählen:</label>
-      <div class="theme-pick-grid" id="theme-pick-grid"></div>
-      <button class="setup-btn" id="theme-next-btn" onclick="goCount()">Weiter →</button>
-    </div>
     <div id="step-json">
       <label class="setup-label">Fragenkatalog laden:</label>
       <div id="json-cache-hint" style="display:none;margin-bottom:10px;padding:10px 14px;background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);border-radius:10px;font-size:.8rem;color:var(--goldt)">
@@ -895,8 +868,6 @@ function applyTheme(id,updateTitle){
   const t=THEMES[id];
   const r=document.documentElement.style;
   r.setProperty('--bg',t.bg);
-  r.setProperty('--bg-mid',t.bgMid);
-  r.setProperty('--gd',t.gd);
   r.setProperty('--gm',t.gm||t.gd);
   r.setProperty('--gold',t.gold);
   r.setProperty('--goldt',t.goldt);
@@ -942,7 +913,7 @@ function applyTheme(id,updateTitle){
   }
   updateTitleDisplay();
   // Mark theme cards (settings + setup picker)
-  document.querySelectorAll('.theme-card,.theme-pick-card').forEach(c=>{
+  document.querySelectorAll('.theme-card').forEach(c=>{
     c.classList.toggle('selected',c.dataset.tid===id);
     c.classList.toggle('tsel',c.dataset.tid===id);
   });
@@ -971,36 +942,12 @@ function updateTitleDisplay(){
     st.textContent=S.title.replace(/^\p{Emoji}+\s*/u,'').replace(/\s*\p{Emoji}+$/u,'').trim()||t.defaultTitle;
   }
 }
-function resetTitle(){
-  S.title=THEMES[S.theme].defaultTitle;
-  const ti=document.getElementById('quiz-title-inp');
-  if(ti) ti.value=S.title;
-  updateTitleDisplay();
-}
 
 // ════════════════════════════════════════════════════════
 //  SETUP FLOW
 // ════════════════════════════════════════════════════════
-function renderThemePicker(){
-  const grid=document.getElementById('theme-pick-grid');
-  if(!grid)return;
-  grid.innerHTML='';
-  Object.entries(THEMES).forEach(([id,t])=>{
-    if(id==='none') return;
-    const card=document.createElement('div');
-    card.className='theme-pick-card'+(S.theme===id?' tsel':'');
-    card.innerHTML=`<span class="theme-pick-icon">${t.icon}</span><div class="theme-pick-name">${t.label.replace(/^\p{Emoji}+\s*/u,'')}</div>`;
-    card.addEventListener('click',()=>{
-      document.querySelectorAll('.theme-pick-card').forEach(c=>c.classList.remove('tsel'));
-      card.classList.add('tsel');
-      applyTheme(id,true);
-    });
-    grid.appendChild(card);
-  });
-}
 function goJson(){
   document.getElementById('step-json').style.display='block';
-  document.getElementById('step-theme').style.display='none'; // Theme-Auswahl wird im Setup übersprungen
   document.getElementById('step-count').style.display='none';
   document.getElementById('step-names').style.display='none';
   const hint=document.getElementById('json-cache-hint');
@@ -1062,12 +1009,7 @@ function handleJsonUpload(e){
   r.readAsText(f);
   e.target.value='';
 }
-function goTheme(){
-  document.getElementById('step-json').style.display='none';
-  document.getElementById('step-theme').style.display='block';
-}
 function goCount(){
-  document.getElementById('step-theme').style.display='none';
   document.getElementById('step-json').style.display='none';
   document.getElementById('step-names').style.display='none';
   document.getElementById('step-count').style.display='block';
@@ -2286,37 +2228,6 @@ function onTC(ci,pi){
 // ════════════════════════════════════════════════════════
 //  SETTINGS – QUESTION STRUCTURE MANAGEMENT
 // ════════════════════════════════════════════════════════
-function applyQStructure(){
-  // Read current pts+timers from inputs before applying
-  const newPts=[];const newTimers=[];
-  let valid=true;
-  S.pts.forEach((_,pi)=>{
-    const pEl=document.getElementById(`qsp-${pi}`);
-    const tEl=document.getElementById(`qst-def-${pi}`);
-    if(!pEl||!tEl){valid=false;return;}
-    const pv=parseInt(pEl.value);
-    const tv=parseInt(tEl.value);
-    if(isNaN(pv)||pv<1){toast('❌ Ungültiger Punktewert');valid=false;return;}
-    if(isNaN(tv)||tv<5){toast('❌ Ungültiger Timer-Wert (min. 5s)');valid=false;return;}
-    newPts.push(pv);
-    newTimers.push(tv);
-  });
-  if(!valid) return;
-  if(newPts.length===0){toast('❌ Mindestens eine Frage-Stufe erforderlich');return;}
-  // Save current question content before restructuring
-  saveQContent();
-  // Resize each category's question array
-  S.qs.forEach((col,ci)=>{
-    while(col.length<newPts.length) col.push(defQ(ci,col.length));
-    col.length=newPts.length;
-  });
-  S.pts=newPts;
-  S.timers=newTimers;
-  syncPTS();
-  save();
-  renderQuestionsTab();
-  toast('✔ Fragenstruktur aktualisiert!');
-}
 function addQLevel(){
   // Aktuelle Eingabewerte einlesen bevor neu gerendert wird
   const cur=[];const curT=[];
@@ -3031,7 +2942,6 @@ syncPTS();
 ensureQsForCats();
 applyTheme(S.theme,false);
 updateTitleDisplay();
-renderThemePicker();
 document.getElementById('tc-inp').addEventListener('keydown',e=>{if(e.key==='Enter')goNames();});
 // Auto-save: trigger on any input or change inside the settings panel
 document.getElementById('settings-screen').addEventListener('input', scheduleAutoSave);
