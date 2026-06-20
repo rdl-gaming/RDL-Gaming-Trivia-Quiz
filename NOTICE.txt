@@ -30,3 +30,4 @@ https://scripts.sil.org/OFL
              dieser Software – wird nur zur Laufzeit bei Bedarf geladen)
    Bedingungen: https://www.youtube.com/t/terms
    Datenschutz: https://policies.google.com/privacy
+   
