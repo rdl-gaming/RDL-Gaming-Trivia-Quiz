@@ -1,5 +1,5 @@
 PROPRIETÄRE SOFTWARELIZENZ
-Copyright (c) 2026 Sven Riedel. https://github.com/rdl-gaming/RDL-Gaming-Trivia-Quiz
+Copyright (c) 2026 Sven Riedel. https://github.com/rdl-gaming
 
 Alle Rechte vorbehalten.
 
