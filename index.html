@@ -1174,11 +1174,10 @@ function ytId(url){
 }
 // Slot füllt den verfügbaren Platz in #m-body vollständig aus (wie bei Bildern),
 // damit der innere Player-Container seine Größe per aspect-ratio gegen eine
-// echte, definierte Fläche berechnen kann statt gegen "auto" (sonst kann der
-// Container auf 0×0 kollabieren, da sein einziger Inhalt position:absolute ist).
+// echte, definierte Fläche berechnen kann statt gegen "auto".
 function wrapMediaSlot(el){
   const slot=document.createElement('div');
-  slot.style.cssText='flex:1;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden';
+  slot.style.cssText='flex:1;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden';
   slot.appendChild(el);
   return slot;
 }
@@ -1590,6 +1589,7 @@ function openQ(ci,pi){
 
   const body=document.getElementById('m-body');
   body.innerHTML='';
+  body.style.minHeight='';
 
   if(q.type==='text'){
     const d=document.createElement('div');
@@ -1625,6 +1625,11 @@ function openQ(ci,pi){
     if(!q.question){
       body.appendChild(Object.assign(document.createElement('div'),{className:'qtxt',style:'color:#666',textContent:`(Keine ${q.type==='video'?'Video':'Audio'}-URL hinterlegt)`}));
     } else {
+      // #m-body hat sonst keine eigene definierte Höhe (nur max-height über das
+      // Modal) – ohne Inhalt mit Eigengröße kann der Player dann auf 0×0
+      // zusammenschrumpfen. Eine konkrete Mindesthöhe gibt ihm echten Platz,
+      // den er per aspect-ratio maximal ausfüllen kann.
+      body.style.minHeight='min(50vh,420px)';
       body.appendChild(buildMediaEl(q));
     }
   }
@@ -1685,7 +1690,7 @@ function buildAnswerMedia(url){
   if(ytId(url)){
     const fakeQ={type:'video',question:url,startTime:null,duration:null,questionText:''};
     const wrap=buildMediaEl(fakeQ);
-    if(wrap){ wrap.style.marginTop='10px'; }
+    if(wrap){ wrap.style.marginTop='10px'; wrap.style.width='auto'; wrap.style.maxWidth='min(560px,100%)'; wrap.style.maxHeight='100%'; wrap.style.flexShrink='1'; wrap.style.minHeight='0'; }
     return wrap;
   }
   const lower=url.toLowerCase().split('?')[0];
@@ -1779,6 +1784,7 @@ function revealAnswer(){
       const mediaWrap=document.createElement('div');
       mediaWrap.id='ans-media-wrap';
       mediaWrap.style.cssText='margin-top:10px;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%';
+      if(ytId(q.answerMedia)) mediaWrap.style.minHeight='min(40vh,320px)';
       const el=buildAnswerMedia(q.answerMedia);
       if(el){
         mediaWrap.appendChild(el);
