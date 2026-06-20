@@ -7,63 +7,82 @@ Proprietäre Software – Nutzung, Vervielfältigung und Weitergabe nur mit ausd
 
 ## Beschreibung
 
-Eine vollständig in sich geschlossene, browserbasierte Quiz-App für Gruppen und Events. Die gesamte Anwendung besteht aus **einer einzigen HTML-Datei** – kein Server, keine Installation, keine Abhängigkeiten nötig. Einfach die Datei im Browser öffnen und losspielen.
+Eine vollständig in sich geschlossene, browserbasierte Quiz-App für Gruppen und Events. Die gesamte Anwendung besteht aus **einer einzigen HTML-Datei** (`index.html`) – kein Server, keine Installation, keine Abhängigkeiten nötig. Einfach die Datei im Browser öffnen und losspielen.
 
 ---
 
 ## Features
 
 ### Themes
-Die App unterstützt fünf wählbare Themes, die Farben, Partikeleffekte und Titel anpassen:
+Die App unterstützt vier wählbare Themes, die Farben, Hintergrund, Partikeleffekte und Standardtitel anpassen:
 
 | Theme | Icon | Partikeleffekte |
 |---|---|---|
 | Weihnachten | 🎄 | ❄ ❅ ❆ ✦ |
 | Ostern | 🐣 | 🌸 🌷 🥚 🐣 🌼 |
-| Geburtstag | 🎂 | 🎈 🎉 ⭐ ✨ 🎊 |
-| Hochzeit | 💍 | 💍 💐 🌹 💕 ✨ |
-| Party | 🎊 | 🎊 🎉 ⚡ 💫 🌟 |
+| Halloween | 🎃 | 🎃 🦇 👻 🕷️ |
+| Sport | 🏆 | ⚽ 🏀 🏆 ⭐ |
+
+Das Theme wird entweder aus dem geladenen Fragenkatalog (`.json`) übernommen oder kann jederzeit über **⚙ Einstellungen → 🎨 Optionen** gewechselt werden.
+
+### Spielmodi
+Vor dem Start wird neben der Teamanzahl auch der Spielmodus festgelegt:
+
+- **👥 Team-Modus** – Mehrere Teams können bei derselben Frage Punkte erhalten; der Spielleiter vergibt sie nach Anzeige der Antwort manuell per Klick an beliebig viele Teams (jedes Team max. einmal pro Frage).
+- **⚔️ VS-Modus** – Nur ein Team kann pro Frage punkten. Antwortet das zuerst gewählte Team falsch, gibt es Punktabzug und die Frage wird für die übrigen Teams zur **Weitergabe** mit halben Punkten freigegeben. Ein eingeblendetes Mode-Badge zeigt jederzeit den aktiven Modus an.
+
+### Moderator-Antwortvorschau
+Im **VS-Modus** öffnet sich automatisch ein separates Browser-Popup-Fenster nur für den Spielleiter. Über den Button **👁 Antwort prüfen** kann die richtige Antwort (inkl. Kategorie und aktuellem Punktwert) dort eingesehen werden, ohne sie auf dem für alle sichtbaren Hauptbildschirm/Beamer preiszugeben.
 
 ### Fragentypen
 Jede Frage kann einen der folgenden Inhaltstypen haben:
 
-- **Text** – klassische Frage als reiner Text
-- **Bild** – lokale Bilddatei hochladen (optional pixeliert darstellbar)
-- **Audio** – lokale Audiodatei mit eigenem Play/Pause-Button
-- **Video** – lokale Videodatei mit Lautstärkeregelung
-- **YouTube** – YouTube-URL direkt einbetten (lädt YouTube IFrame API bei Bedarf nach)
+- **Text** – klassische Frage als reiner Text, optional mit zusätzlichem Antwort-Medium (Bild/Video/Audio/YouTube), das erst beim Aufdecken der Antwort angezeigt wird
+- **Bild** – lokale Bilddatei hochladen oder URL eingeben (optional **verpixelt** darstellbar; beim Aufdecken der Antwort wird automatisch das Originalbild eingeblendet); Bilder lassen sich per Klick in einer Vollbild-Lightbox vergrößern
+- **Audio** – lokale Audiodatei mit eigenem Play/Pause-Button; alternativ eine YouTube-URL für reine Musikwiedergabe ohne sichtbares Video
+- **Video** – lokale Videodatei mit eigener Lautstärkeregelung
+- **YouTube** – YouTube-Link direkt im Video- oder Audio-Feld eingeben; die YouTube IFrame API wird dabei erst bei Bedarf (Klick auf Play) nachgeladen. Native YouTube-Steuerelemente sind ausgeblendet, stattdessen gibt es einen eigenen Vollbild-Button; optional lassen sich Startzeit und Wiedergabedauer pro Frage begrenzen
 
 ### Spielablauf
-- Bis zu beliebig viele **Teams** spielen gleichzeitig
+- Bis zu **10 Teams** spielen gleichzeitig, beliebig viele Kategorien sind möglich
 - Teamnamen werden vor dem Spielstart individuell vergeben
 - Das **Spielbrett** zeigt Kategorien als Spalten und Punktwerte als Zeilen
 - Geklickte Felder öffnen die Frage in einem Modal-Fenster
-- Nach Anzeige der Antwort kann der Spielleiter Punkte manuell an beliebige Teams vergeben
+- Nach Anzeige der Antwort vergibt der Spielleiter Punkte – die Vergabelogik unterscheidet sich je nach Team- oder VS-Modus (siehe oben)
 - Bereits beantwortete Felder werden ausgeblendet
 - Die **Punkteanzeige** am unteren Rand hebt das führende Team hervor
+- Sobald alle Felder gespielt wurden, erscheint automatisch eine **Sieger-Anzeige** mit Feuerwerk-Animation, Siegerkrone, Podium für die Top 3 (🥇🥈🥉) und Unentschieden-Erkennung
 
 ### Punkte-Multiplikatoren
-Multiplikatoren können so konfiguriert werden, dass sie nach einem bestimmten Prozentsatz der gespielten Fragen automatisch aktiviert werden (z. B. ×2 nach 50 % der Fragen). Mehrere Multiplikatoren sind möglich und werden kumuliert.
+Multiplikatoren können so konfiguriert werden, dass sie nach einem bestimmten Prozentsatz der gespielten Fragen automatisch aktiviert werden (z. B. ×2 nach 30 % der Fragen). Mehrere Multiplikatoren stapeln sich multiplikativ: 2× nach 30 % und 4× nach 60 % ergeben ab 60 % insgesamt 8× Basispunkte.
 
 ### Timer
-Jede Frage kann einen eigenen Countdown-Timer erhalten. Die Lautstärke des Timer-Tons ist einstellbar.
+Jede Punktestufe erhält einen Standard-Timer (in Sekunden), der pro einzelner Frage überschrieben werden kann. Die Lautstärke des Timer-Tons sowie die Lautstärken für Video- und Musikwiedergabe sind separat einstellbar.
 
 ---
 
 ## Einrichtung & Bedienung
 
 ### Start
-1. `fix_snow_UI_after_FOSS.html` im Browser öffnen
-2. Theme auswählen
-3. Fragenkatalog als `.json`-Datei laden (oder vorhandenen Speicher verwenden)
-4. Anzahl der Teams und Teamnamen eingeben
+1. https://rdl-gaming.github.io/RDL-Gaming-Trivia-Quiz/ im Browser öffnen
+2. Fragenkatalog als `.json`-Datei laden (beim Neustart eines bestehenden Spiels kann alternativ ein bereits im Speicher vorhandener Katalog weiterverwendet werden)
+3. Anzahl der Teams (1–10) und Spielmodus (Team oder VS) wählen
+4. Teamnamen eingeben
 5. Quiz starten
 
+Das Theme wird dabei automatisch aus dem geladenen Katalog übernommen und kann jederzeit später in den Einstellungen geändert werden.
+
 ### Settings-Panel
-Über den Button **⚙ Einstellungen** (oben rechts im Quiz) öffnet sich das Settings-Panel mit drei Reitern:
+Über den Button **⚙ Einstellungen** (oben rechts im Quiz) öffnet sich das Settings-Panel. In der Kopfzeile stehen jederzeit folgende Aktionen zur Verfügung:
+
+- **🔁 Fragen neu starten** – setzt Punkte und Spielfortschritt zurück, Fragen/Kategorien/Teams bleiben erhalten
+- **🎮 Spiel neu starten** – setzt das gesamte Spiel zurück und führt zur Katalog-/Teamauswahl
+- **📥 Import** / **📤 Export** (siehe unten)
+
+Darunter gliedert sich das Panel in drei Reiter:
 
 **📝 Fragen**
-Alle Fragen und Antworten bearbeiten, Fragetyp wählen, Medien hochladen, Timer pro Frage setzen.
+Legt zunächst über die **Fragenstruktur** fest, wie viele Punktestufen es gibt und welche Punkte- und Standard-Timerwerte pro Stufe gelten (Stufen lassen sich hinzufügen oder löschen). Darunter werden alle Fragen und Antworten bearbeitet: Fragetyp wählen, Medien hochladen oder per URL einbinden, Verpixelung umschalten, Start-/Endzeit für Video-/Audio-/YouTube-Inhalte setzen, optionales Antwort-Medium hinterlegen und Timer pro Frage individuell setzen.
 
 **📁 Kategorien**
 Kategorien anlegen, umbenennen, mit Emoji versehen, farblich anpassen oder löschen.
@@ -71,13 +90,13 @@ Kategorien anlegen, umbenennen, mit Emoji versehen, farblich anpassen oder lösc
 **🎨 Optionen**
 - Theme wechseln
 - Quiz-Titel anpassen
-- Punktwerte und Timer-Stufen konfigurieren
 - Punkte-Multiplikatoren verwalten
-- Lautstärke für Timer, Video und Musik einstellen
+- Lautstärke für Timer-Ton, Video und Musik separat einstellen
+- **📑 Rechtliches** – Impressum, Datenschutzerklärung, Lizenz und Drittanbieter-Hinweise direkt als schließbares Popup aufrufen (siehe Abschnitt „Rechtliche Hinweise“)
 
 ### Import / Export
-- **Export:** Speichert den gesamten Fragenkatalog (inkl. eingebetteter Medien) als `.json`-Datei
-- **Import:** Lädt eine zuvor exportierte `.json`-Datei und stellt alle Fragen wieder her
+- **Export:** Speichert den gesamten Spielstand als `.json`-Datei – Fragen und Antworten inkl. eingebetteter Medien, Kategorien, Punkte-/Timer-Stufen, Theme, Quiz-Titel, Multiplikatoren und Lautstärke-Einstellungen
+- **Import:** Lädt eine zuvor exportierte `.json`-Datei und stellt den vollständigen Stand wieder her
 
 ---
 
@@ -96,7 +115,7 @@ Der aktuelle Spielstand, Fragen und Einstellungen werden automatisch im **localS
 | Mountains of Christmas, Playfair Display, Nunito (Google Fonts) | SIL Open Font License 1.1 (OFL) |
 | YouTube IFrame API | Proprietärer Dienst von Google LLC – [Nutzungsbedingungen](https://www.youtube.com/t/terms) |
 
-Weitere Details siehe [NOTICE](NOTICE).
+Weitere Details siehe [NOTICE.txt](NOTICE.txt). Die gleichen Informationen sind auch direkt in der App unter **⚙ Einstellungen → 🎨 Optionen → 📑 Rechtliches → ℹ️ Drittanbieter-Hinweise** einsehbar.
 
 ---
 
@@ -108,12 +127,19 @@ Weitere Details siehe [NOTICE](NOTICE).
 
 ## Lizenz
 
-Copyright (c) 2026 Sven Riedel. Alle Rechte vorbehalten.  
-Proprietäre Software – siehe [LICENSE](LICENSE) für vollständige Bedingungen.
+Copyright (c) 2026 Sven Riedel. Alle Rechte vorbehalten.
+Proprietäre Software – siehe [LICENSE.txt](LICENSE.txt) für vollständige Bedingungen. Die Lizenz ist auch direkt in der App unter **⚙ Einstellungen → 🎨 Optionen → 📑 Rechtliches → 📜 Lizenz** abrufbar.
 
 ---
 
 ## Rechtliche Hinweise
 
-- **Impressum:** [impressum.html](impressum.html)
-- **Datenschutz:** [datenschutz.html](datenschutz.html)
+Impressum und Datenschutzerklärung sind direkt in `index.html` integriert und ohne separate Dateien erreichbar:
+
+**⚙ Einstellungen → 🎨 Optionen → 📑 Rechtliches**, dort:
+- **📄 Impressum**
+- **🔒 Datenschutzerklärung**
+- **📜 Lizenz**
+- **ℹ️ Drittanbieter-Hinweise**
+
+Ein Klick auf einen der Buttons öffnet das jeweilige Dokument als schließbares Popup innerhalb der App. Zur Referenz liegen die Inhalte zusätzlich als eigenständige Dateien im Repository: [Impressum.html](Impressum.html), [Datenschutz.html](Datenschutz.html), [LICENSE.txt](LICENSE.txt), [NOTICE.txt](NOTICE.txt).
