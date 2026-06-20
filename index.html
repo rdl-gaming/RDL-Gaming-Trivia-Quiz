@@ -508,6 +508,7 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
       <button class="tab-btn active" onclick="switchTab('questions')">📝 Fragen</button>
       <button class="tab-btn" onclick="switchTab('categories')">📁 Kategorien</button>
       <button class="tab-btn" onclick="switchTab('settings')">🎨 Optionen</button>
+      <button class="tab-btn" onclick="switchTab('legal')">📑 Rechtliches</button>
     </div>
 
     <!-- FRAGEN TAB -->
@@ -602,8 +603,15 @@ input[type="color"]::-webkit-color-swatch{border-radius:4px;border:2px solid rgb
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- RECHTLICHES TAB -->
+    <div class="tab-panel" id="tab-legal">
       <div class="global-box">
-        <h3>📑 Rechtliches</h3>
+        <h3>📑 Rechtliche Dokumente</h3>
+        <div style="font-size:.78rem;color:var(--silver);line-height:1.5;margin-bottom:16px">
+          Hier findest du alle rechtlich relevanten Dokumente zu dieser Anwendung.
+        </div>
         <div class="legal-links">
           <button class="legal-link-btn" onclick="showDoc('impressum')">📄 Impressum</button>
           <button class="legal-link-btn" onclick="showDoc('datenschutz')">🔒 Datenschutzerklärung</button>
@@ -2079,7 +2087,7 @@ let activeTab='questions';
 function switchTab(name){
   activeTab=name;
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    const tabs=['questions','categories','settings'];
+    const tabs=['questions','categories','settings','legal'];
     b.classList.toggle('active',tabs[i]===name);
   });
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
@@ -3286,7 +3294,7 @@ const DOCS = {
 <div class="wrap">
 
   <h1>Drittanbieter-Hinweise</h1>
-  <p class="updated">Quiz App · Copyright © 2026 Sven Riedel</p>
+  <p class="updated">Proprietäre Softwarelizenz · Copyright © 2026 Sven Riedel · <a href="https://github.com/rdl-gaming/" target="_blank" rel="noopener">github.com/rdl-gaming/</a></p>
 
   <p style="margin-top:20px">
     Dieses Produkt enthält oder verwendet folgende Komponenten Dritter:
