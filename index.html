@@ -1172,12 +1172,14 @@ function ytId(url){
   const m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
   return m?m[1]:null;
 }
-// Slot füllt den verfügbaren Platz in #m-body vollständig aus (wie bei Bildern),
-// damit der innere Player-Container seine Größe per aspect-ratio gegen eine
-// echte, definierte Fläche berechnen kann statt gegen "auto".
+// Slot ist ein einfacher, definiert großer Container (100% des verfügbaren
+// Platzes in #m-body). Der Player-Container selbst wird darin absolut
+// positioniert (inset:0 + margin:auto) und berechnet seine Größe per
+// aspect-ratio gegen diese feste Fläche – das ist zuverlässiger als sich auf
+// Flexbox-"stretch" zu verlassen.
 function wrapMediaSlot(el){
   const slot=document.createElement('div');
-  slot.style.cssText='flex:1;width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden';
+  slot.style.cssText='position:relative;flex:1;width:100%;height:100%;min-height:0;overflow:hidden';
   slot.appendChild(el);
   return slot;
 }
@@ -1191,7 +1193,7 @@ function buildMediaEl(q){
     const isMusicMode=(q.type==='audio');
 
     const wrapper=document.createElement('div');
-    wrapper.style.cssText='position:relative;width:auto;height:auto;max-width:100%;max-height:100%;margin:auto;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;flex-shrink:1;min-height:0';
+    wrapper.style.cssText='position:absolute;inset:0;margin:auto;width:auto;height:auto;max-width:100%;max-height:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000';
 
     // Black placeholder with play button
     const placeholder=document.createElement('div');
@@ -1375,7 +1377,7 @@ function buildMediaEl(q){
   // ── Lokale Video-Datei ──────────────────────────────────
   if(q.type==='video'){
     const wrapper=document.createElement('div');
-    wrapper.style.cssText='position:relative;width:auto;height:auto;max-width:100%;max-height:100%;margin:auto;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;flex-shrink:1;min-height:0';
+    wrapper.style.cssText='position:absolute;inset:0;margin:auto;width:auto;height:auto;max-width:100%;max-height:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000';
 
     // Placeholder mit Play-Button (kein titleCover-Balken für lokale Dateien)
     const placeholder=document.createElement('div');
@@ -1442,7 +1444,7 @@ function buildMediaEl(q){
   // ── Lokale Audio-Datei (Musik-Modus) ────────────────────
   {
     const wrapper=document.createElement('div');
-    wrapper.style.cssText='position:relative;width:auto;height:auto;max-width:100%;max-height:100%;margin:auto;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;flex-shrink:1;min-height:0';
+    wrapper.style.cssText='position:absolute;inset:0;margin:auto;width:auto;height:auto;max-width:100%;max-height:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000';
 
     const placeholder=document.createElement('div');
     placeholder.style.cssText='position:absolute;inset:0;background:#000;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;cursor:pointer';
@@ -1587,9 +1589,15 @@ function openQ(ci,pi){
   document.getElementById('m-cat').textContent=`${cat.emoji}  ${cat.name}`;
   document.getElementById('m-pts').textContent=mult>1?`${effPts} Punkte (×${mult})`:`${effPts} Punkte`;
 
+  const modal=document.querySelector('.qmodal');
   const body=document.getElementById('m-body');
   body.innerHTML='';
-  body.style.minHeight='';
+  // .qmodal hat sonst nur max-height (keine definierte Höhe) – Kopf-/Fußzeile
+  // haben flex-shrink:0 und behalten daher immer ihren Platz; #m-body
+  // (flex:1) bekommt den Rest. Ohne definierte Modal-Höhe gibt es aber keinen
+  // "Rest" zum Verteilen, wodurch der Medienbereich kollabieren kann. Bei
+  // Video/Audio setzen wir die Modal-Höhe daher fest auf ihr Maximum.
+  modal.style.height='';
 
   if(q.type==='text'){
     const d=document.createElement('div');
@@ -1625,11 +1633,7 @@ function openQ(ci,pi){
     if(!q.question){
       body.appendChild(Object.assign(document.createElement('div'),{className:'qtxt',style:'color:#666',textContent:`(Keine ${q.type==='video'?'Video':'Audio'}-URL hinterlegt)`}));
     } else {
-      // #m-body hat sonst keine eigene definierte Höhe (nur max-height über das
-      // Modal) – ohne Inhalt mit Eigengröße kann der Player dann auf 0×0
-      // zusammenschrumpfen. Eine konkrete Mindesthöhe gibt ihm echten Platz,
-      // den er per aspect-ratio maximal ausfüllen kann.
-      body.style.minHeight='min(50vh,420px)';
+      modal.style.height='92vh';
       body.appendChild(buildMediaEl(q));
     }
   }
@@ -1690,7 +1694,7 @@ function buildAnswerMedia(url){
   if(ytId(url)){
     const fakeQ={type:'video',question:url,startTime:null,duration:null,questionText:''};
     const wrap=buildMediaEl(fakeQ);
-    if(wrap){ wrap.style.marginTop='10px'; wrap.style.width='auto'; wrap.style.maxWidth='min(560px,100%)'; wrap.style.maxHeight='100%'; wrap.style.flexShrink='1'; wrap.style.minHeight='0'; }
+    if(wrap){ wrap.style.marginTop='10px'; }
     return wrap;
   }
   const lower=url.toLowerCase().split('?')[0];
@@ -1784,7 +1788,7 @@ function revealAnswer(){
       const mediaWrap=document.createElement('div');
       mediaWrap.id='ans-media-wrap';
       mediaWrap.style.cssText='margin-top:10px;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%';
-      if(ytId(q.answerMedia)) mediaWrap.style.minHeight='min(40vh,320px)';
+      if(ytId(q.answerMedia)) document.querySelector('.qmodal').style.height='92vh';
       const el=buildAnswerMedia(q.answerMedia);
       if(el){
         mediaWrap.appendChild(el);
