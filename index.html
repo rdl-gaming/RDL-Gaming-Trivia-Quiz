@@ -1697,9 +1697,16 @@ function buildAnswerMedia(url){
     if(wrap){ wrap.style.marginTop='10px'; }
     return wrap;
   }
+  // Für Blob-URLs: MIME-Typ aus _mediaStore ermitteln (lokale Dateien haben keine Dateiendung in der URL)
+  let mimeType='';
+  if(url.startsWith('blob:')){
+    for(const entry of _mediaStore.values()){
+      if(entry.objectUrl===url){ mimeType=entry.file.type||''; break; }
+    }
+  }
   const lower=url.toLowerCase().split('?')[0];
   // Image
-  if(/\.(jpg|jpeg|png|gif|webp|svg|bmp|avif)$/.test(lower)){
+  if(mimeType.startsWith('image/')||/\.(jpg|jpeg|png|gif|webp|svg|bmp|avif)$/.test(lower)){
     const img=document.createElement('img');
     img.className='qimg zoomable';img.src=url;img.alt='';
     img.style.cssText='max-width:100%;max-height:100%;border-radius:12px;display:block;margin:auto;object-fit:contain;flex-shrink:1;min-height:0';
@@ -1707,7 +1714,7 @@ function buildAnswerMedia(url){
     return img;
   }
   // Video
-  if(/\.(mp4|webm|ogv|mov|avi|mkv)$/.test(lower)){
+  if(mimeType.startsWith('video/')||/\.(mp4|webm|ogv|mov|avi|mkv)$/.test(lower)){
     const v=document.createElement('video');
     v.src=url;v.controls=true;
     v.style.cssText='max-width:100%;max-height:100%;border-radius:12px;display:block;margin:auto;flex-shrink:1;min-height:0';
@@ -1715,7 +1722,7 @@ function buildAnswerMedia(url){
     return v;
   }
   // Audio
-  if(/\.(mp3|wav|ogg|m4a|aac|flac|opus)$/.test(lower)){
+  if(mimeType.startsWith('audio/')||/\.(mp3|wav|ogg|m4a|aac|flac|opus)$/.test(lower)){
     const wrap=document.createElement('div');
     wrap.className='qaud-wrap';wrap.style.marginTop='10px';
     const a=document.createElement('audio');
@@ -2221,7 +2228,7 @@ function renderQuestionsTab(){
               📁 Lokale Datei laden
               <input type="file" id="qamfile-${ci}-${pi}" accept="image/*,video/*,audio/*" style="display:none" onchange="handleAnswerMediaFile(${ci},${pi},this)">
             </label>
-            <span id="qamfile-name-${ci}-${pi}" style="font-size:.7rem;color:var(--silver);margin-left:8px">${q.answerMedia&&(q.answerMedia.startsWith('blob:')||q.answerMedia.startsWith('data:'))?'(Datei geladen)':''}</span>
+            <span id="qamfile-name-${ci}-${pi}" style="font-size:.7rem;color:var(--silver);margin-left:8px">${(()=>{if(!q.answerMedia)return '';const _e=_mediaStore.get('ans-'+ci+'-'+pi);if(_e)return '✓ '+_e.file.name;if(q.answerMedia.startsWith('blob:'))return '(Datei geladen)';return '';})()}</span>
           </div>
         </div>
         <div class="af"><label>Timer (Sek.) \u2014 leer = Standard (${S.timers[pi]||30}s)</label><input class="ainp" type="number" id="qtm-${ci}-${pi}" value="${q.timer||''}" min="5" max="600" placeholder="Standard"></div>
