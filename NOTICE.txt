@@ -1,5 +1,5 @@
 DRITTANBIETER-HINWEISE / THIRD-PARTY NOTICES
-Quiz App – Copyright (c) 2026 Sven Riedel https://github.com/sven2105
+Quiz App – Copyright (c) 2026 Sven Riedel https://github.com/rdl-gaming
 
 Dieses Produkt enthält oder verwendet folgende Komponenten Dritter:
 
